@@ -155,16 +155,21 @@ class MeetingDetailPage extends GetView<MeetingDetailController> {
       return;
     }
 
-    final basePassword = await controller.getMeetingPassword(info.meetingID, info.creatorUserID);
+    final meeting = await controller.getMeetingPassword(info.meetingID, info.creatorUserID);
 
-    if (basePassword?.isEmpty == true) {
+    if (meeting.lockMeeting) {
+      IMViews.showToast(StrRes.meetingIsLocked);
+
+      return;
+    }
+
+    if (meeting.password?.isEmpty == true) {
       controller.enterMeeting();
 
       return;
     }
-    MeetingAlertDialog.showEnterMeetingWithPasswordDialog(Get.context!, info.creatorNickname,
-        onConfirm: (password) async {
-      final result = basePassword == password;
+    MeetingAlertDialog.showEnterMeetingWithPasswordDialog(Get.context!, info.creatorNickname, onConfirm: (password) async {
+      final result = meeting.password == password;
 
       if (!result) {
         IMViews.showToast(StrRes.wrongMeetingPassword);

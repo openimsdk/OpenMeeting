@@ -35,7 +35,7 @@ void main(List<String> args) => Config.init(() async {
         return;
       } else {
         await windowManager.ensureInitialized();
-        // windowManager.setPreventClose(true);
+
         runApp(const MeetingApp());
 
         const size = Size(375, 667);
@@ -55,6 +55,7 @@ void main(List<String> args) => Config.init(() async {
         windowManager.waitUntilReadyToShow(options, () async {
           await windowManager.show();
           await windowManager.focus();
+          await windowManager.setPreventClose(true);
           windowsManager.registerActiveWindow(kMainWindowId);
         });
 

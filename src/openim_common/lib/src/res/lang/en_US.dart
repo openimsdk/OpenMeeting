@@ -610,4 +610,9 @@ const Map<String, String> en_US = {
   'sunday': 'Sunday',
   'participantRemovedHit': 'You have been removed from the meeting.',
   'hasBeenSet': 'Has been set.',
+  'lockMeeting': 'Lock Meeting',
+  'lockMeetingHint': 'After the meeting is locked, new members cannot enter the meeting',
+  'voiceMotivation': 'Voice Motivation',
+  'voiceMotivationHint': 'When enabled, the participants who are speaking will be displayed first.',
+  'meetingIsLocked': 'The meeting is locked.',
 };

@@ -1176,4 +1176,9 @@ class StrRes {
   static String get sunday => 'sunday'.tr;
   static String get participantRemovedHit => 'participantRemovedHit'.tr;
   static String get hasBeenSet => 'hasBeenSet'.tr;
+  static String get lockMeeting => 'lockMeeting'.tr;
+  static String get lockMeetingHint => 'lockMeetingHint'.tr;
+  static String get voiceMotivation => 'voiceMotivation'.tr;
+  static String get voiceMotivationHint => 'voiceMotivationHint'.tr;
+  static String get meetingIsLocked => 'meetingIsLocked'.tr;
 }

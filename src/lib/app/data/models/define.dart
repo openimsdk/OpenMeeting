@@ -47,8 +47,7 @@ extension WindowsTargetExt on int {
   WindowsTarget get windowsVersion => getWindowsTarget(this);
 }
 
-bool get useCompatibleUiMode =>
-    Platform.isWindows && const [WindowsTarget.w7].contains(windowsBuildNumber.windowsVersion);
+bool get useCompatibleUiMode => Platform.isWindows && const [WindowsTarget.w7].contains(windowsBuildNumber.windowsVersion);
 
 const double kTabBarHeight = 28.0;
 
@@ -122,7 +121,7 @@ extension WindowTypeExt on WindowType {
   }
 }
 
-enum  OperationType { participants, roomSettings, leave, end, setting, onlyClose } // case setting for app setting
+enum OperationType { participants, roomSettings, leave, end, setting, onlyClose } // case setting for app setting
 
 enum OperationParticipantType {
   pined,
@@ -135,7 +134,7 @@ enum OperationParticipantType {
   muteAll,
 }
 
-enum RoomSetting { allowParticipantUnMute, allowParticipantVideo, onlyHostCanShareScreen, defaultMuted }
+enum RoomSetting { allowParticipantUnMute, allowParticipantVideo, onlyHostCanShareScreen, defaultMuted, lockMeeting, audioEncouragement }
 
 enum RepeatType { none, daily, weekday, weekly, biweekly, monthly, custom }
 

@@ -22,7 +22,7 @@ abstract class MeetingView extends StatefulWidget {
     this.listener, {
     super.key,
     required this.roomID,
-    this.options = const MeetingOptions(),
+    this.options,
     this.onOperation,
     this.onParticipantOperation,
     this.onSubjectInit,
@@ -31,11 +31,11 @@ abstract class MeetingView extends StatefulWidget {
   final Room room;
   final EventsListener<RoomEvent> listener;
   final String roomID;
-  final MeetingOptions options;
+  final MeetingOptions? options;
   final void Function<T>(BuildContext? context, OperationType type, {T? value})? onOperation;
   final Future<bool> Function<T>({OperationParticipantType type, String userID, T to})? onParticipantOperation;
-  final void Function(BehaviorSubject<MeetingInfoSetting> meetingInfoChangedSubject, BehaviorSubject<List<ParticipantTrack>> participantsSubject)?
-      onSubjectInit;
+  final void Function(BehaviorSubject<MeetingInfoSetting> meetingInfoChangedSubject,
+      BehaviorSubject<List<ParticipantTrack>> participantsSubject)? onSubjectInit;
 }
 
 abstract class MeetingViewState<T extends MeetingView> extends State<T> {
@@ -180,7 +180,8 @@ abstract class MeetingViewState<T extends MeetingView> extends State<T> {
                       startTimerCompleter: startTimerCompleter,
                       enableFullScreen: _enableFullScreen,
                       options: widget.options,
-                      hostUserInfo: UserInfo(userID: MeetingClient().userInfo.userID, nickname: MeetingClient().userInfo.nickname),
+                      hostUserInfo: UserInfo(
+                          userID: MeetingClient().userInfo.userID, nickname: MeetingClient().userInfo.nickname),
                       onOperation: widget.onOperation,
                       onParticipantOperation: widget.onParticipantOperation,
                       child: buildChild(),

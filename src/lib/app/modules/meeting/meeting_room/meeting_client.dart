@@ -91,10 +91,10 @@ class MeetingClient {
     required String url,
     required String token,
     required String roomID,
-    MeetingOptions options = const MeetingOptions(),
+    MeetingOptions? options,
   }) async {
     Logger.print(
-        '=======options: enableMicrophone: ${options.enableMicrophone}, enableSpeaker: ${options.enableSpeaker}, enableVideo: ${options.enableVideo}, videoIsMirroring: ${options.videoIsMirroring} \n token: $token url: $url roomID: $roomID =======');
+        '=======options: enableMicrophone: ${options?.enableMicrophone}, enableSpeaker: ${options?.enableSpeaker}, enableVideo: ${options?.enableVideo}, videoIsMirroring: ${options?.videoIsMirroring} \n token: $token url: $url roomID: $roomID =======');
     try {
       if (isBusy) return null;
       busy = true;
@@ -123,9 +123,8 @@ class MeetingClient {
                   maxBitrate: 5 * 1000 * 1000,
                   maxFramerate: 15,
                 )),
-            defaultAudioOutputOptions: AudioOutputOptions(speakerOn: options.enableSpeaker),
-            defaultScreenShareCaptureOptions:
-                const ScreenShareCaptureOptions(useiOSBroadcastExtension: true, maxFrameRate: 15.0),
+            defaultAudioOutputOptions: AudioOutputOptions(speakerOn: options?.enableSpeaker),
+            defaultScreenShareCaptureOptions: const ScreenShareCaptureOptions(useiOSBroadcastExtension: true, maxFrameRate: 15.0),
           ),
         );
       });
@@ -219,8 +218,7 @@ class MeetingClient {
 
         return MeetingRepository().setPersonalSetting(roomID!, userID!, setting);
       case OperationParticipantType.muteAll:
-        final result =
-            await MeetingRepository().operateAllStream(roomID!, loginUserID, microphoneOnEntry: !(to as bool));
+        final result = await MeetingRepository().operateAllStream(roomID!, loginUserID, microphoneOnEntry: !(to as bool));
 
         return result;
       case OperationParticipantType.nickname:

@@ -40,6 +40,7 @@ abstract class ParticipantWidget extends StatefulWidget {
       MeetingOptions? options,
       bool focusModel = false,
       Color? backgroundColor,
+      bool audioEncouragement = true,
       VoidCallback? onTapSwitchCamera}) {
     if (participantTrack.participant is LocalParticipant) {
       return LocalParticipantWidget(
@@ -55,6 +56,7 @@ abstract class ParticipantWidget extends StatefulWidget {
         onTapSwitchCamera,
         focusModel: focusModel,
         backgroundColor: backgroundColor,
+        audioEncouragement: audioEncouragement,
       );
     } else if (participantTrack.participant is RemoteParticipant) {
       return RemoteParticipantWidget(
@@ -69,6 +71,7 @@ abstract class ParticipantWidget extends StatefulWidget {
         onTapSwitchCamera,
         focusModel: focusModel,
         backgroundColor: backgroundColor,
+        audioEncouragement: audioEncouragement,
       );
     }
     throw UnimplementedError('Unknown participant type');
@@ -89,6 +92,7 @@ abstract class ParticipantWidget extends StatefulWidget {
   final bool isZoom;
   final bool focusModel; // only for desktop
   final Color? backgroundColor;
+  final bool audioEncouragement;
 
   const ParticipantWidget({
     this.quality = VideoQuality.MEDIUM,
@@ -96,6 +100,7 @@ abstract class ParticipantWidget extends StatefulWidget {
     this.isMirroring,
     this.focusModel = false,
     this.backgroundColor,
+    this.audioEncouragement = true,
     super.key,
   });
 }
@@ -129,6 +134,7 @@ class LocalParticipantWidget extends ParticipantWidget {
     super.isMirroring,
     super.focusModel,
     super.backgroundColor,
+    super.audioEncouragement,
   });
 
   @override
@@ -163,6 +169,7 @@ class RemoteParticipantWidget extends ParticipantWidget {
     super.isZoom,
     super.focusModel,
     super.backgroundColor,
+    super.audioEncouragement,
   });
 
   @override
@@ -222,7 +229,9 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget> extends Stat
   @override
   Widget build(BuildContext ctx) => Container(
         foregroundDecoration: BoxDecoration(
-          border: widget.participant.isSpeaking && !widget.isScreenShare ? Border.all(width: 5, color: Styles.c_0089FF) : null,
+          border: !widget.audioEncouragement
+              ? null
+              : (widget.participant.isSpeaking && !widget.isScreenShare ? Border.all(width: 5, color: Styles.c_0089FF) : null),
         ),
         color: widget.backgroundColor ?? Color(0xFF666666),
         child: Stack(

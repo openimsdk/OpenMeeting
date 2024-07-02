@@ -356,9 +356,15 @@ class MeetingPage extends GetView<MeetingController> {
       return;
     }
 
-    final basePassword = await controller.getMeetingPassword(info.meetingID, info.creatorUserID);
+    final meeting = await controller.getMeetingPassword(info.meetingID, info.creatorUserID);
 
-    if (basePassword?.isEmpty == true) {
+    if (meeting.lockMeeting) {
+      IMViews.showToast(StrRes.meetingIsLocked);
+
+      return;
+    }
+
+    if (meeting.password?.isEmpty == true) {
       controller.quickEnterMeeting(info.meetingID);
 
       return;
@@ -366,12 +372,12 @@ class MeetingPage extends GetView<MeetingController> {
 
     MeetingAlertDialog.showEnterMeetingWithPasswordDialog(Get.context!, info.creatorNickname,
         onConfirm: (password) async {
-      final result = basePassword == password;
+      final result = meeting.password == password;
 
       if (!result) {
         IMViews.showToast(StrRes.wrongMeetingPassword);
       } else {
-        controller.quickEnterMeeting(info.meetingID);
+        controller.quickEnterMeeting(info.meetingID, password: password);
       }
     });
   }

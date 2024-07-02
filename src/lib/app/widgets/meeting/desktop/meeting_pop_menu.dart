@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:openim_common/openim_common.dart';
+import 'package:openmeeting/app/data/models/meeting.pb.dart';
 import 'package:popover/popover.dart';
 import 'package:flutter/material.dart';
 
@@ -215,11 +216,7 @@ class MeetingPopMenu {
   }
 
   static void showSimple(BuildContext context,
-      {double contentDyOffset = 0,
-      required String title1,
-      required VoidCallback onTap1,
-      String? title2,
-      VoidCallback? onTap2}) {
+      {double contentDyOffset = 0, required String title1, required VoidCallback onTap1, String? title2, VoidCallback? onTap2}) {
     // internal
     Widget buildContent() {
       return ListView(
@@ -258,19 +255,11 @@ class MeetingPopMenu {
   }
 
   static void showRoomSetting(BuildContext context,
-      {bool allowParticipantUnMute = false,
-      bool allowParticipantVideo = false,
-      bool onlyHostCanShareScreen = false,
-      bool defaultMuted = false,
-      Future<bool?> Function(RoomSetting setting, bool to)? onOperation,
-      VoidCallback? onPop}) {
+      {required MeetingSetting setting, Future<bool?> Function(RoomSetting setting, bool to)? onOperation, VoidCallback? onPop}) {
     // internal
     Widget buildContent() {
       return RoomSettingPanel(
-        allowParticipantUnMute: allowParticipantUnMute,
-        allowParticipantVideo: allowParticipantVideo,
-        onlyHostCanShareScreen: onlyHostCanShareScreen,
-        defaultMuted: defaultMuted,
+        setting: setting,
         onOperation: onOperation,
       );
     }
@@ -286,8 +275,7 @@ class MeetingPopMenu {
     );
   }
 
-  static void showEnableCameraSetting(BuildContext context,
-      {bool enableCamera = false, ValueChanged<bool>? onOperation, VoidCallback? onPop}) {
+  static void showEnableCameraSetting(BuildContext context, {bool enableCamera = false, ValueChanged<bool>? onOperation, VoidCallback? onPop}) {
     bool selected = enableCamera;
     // internal
     Widget buildContent() {

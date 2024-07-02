@@ -21,7 +21,7 @@ import '../../../data/models/meeting_option.dart';
 import '../../../data/services/repository/repository_adapter.dart';
 import '../meeting_room/meeting_client.dart';
 
-class MeetingController extends GetxController with WindowListener, MultiWindowListener {
+class MeetingController extends GetxController with WindowListener {
   final meetingInfoList = <MeetingInfoExt>[].obs;
   final nicknameMapping = <String, String>{}.obs;
   final userInfo = Get.find<AppController>().userInfo!;
@@ -36,10 +36,12 @@ class MeetingController extends GetxController with WindowListener, MultiWindowL
   @override
   void onInit() {
     super.onInit();
-    // queryUnfinishedMeeting();
-    queryMeetingInTimer();
+    queryUnfinishedMeeting();
+    // queryMeetingInTimer();
 
-    DesktopMultiWindow.setMethodHandler((call, fromWindowId) async {
+    windowManager.addListener(this);
+
+    windowsManager.setMethodHandler((call, fromWindowId) async {
       Logger.print("[Main] call ${call.method} with args ${call.arguments} from window $fromWindowId");
       if (call.method == WindowEvent.sendMessage.rawValue) {
         final params = Map<String, dynamic>.from(call.arguments);
@@ -94,7 +96,7 @@ class MeetingController extends GetxController with WindowListener, MultiWindowL
     super.onWindowClose();
     Logger.print('[Main] ==== onWindowClose');
     Future.delayed(Duration.zero, () async {
-      await windowManager.hide();
+      exit(0);
     });
   }
 
@@ -158,10 +160,10 @@ class MeetingController extends GetxController with WindowListener, MultiWindowL
     return groupedMeetings;
   }
 
-  Future<String?> getMeetingPassword(String meetingID, String userID) async {
+  Future<({String? password, bool lockMeeting})> getMeetingPassword(String meetingID, String userID) async {
     final result = await repository.getMeetingInfo(meetingID, userID);
 
-    return result?.password;
+    return (password: result?.password, lockMeeting: result?.setting.lockMeeting ?? false);
   }
 
   String getMeetingDuration(MeetingInfoSetting meetingInfo) {
@@ -243,7 +245,7 @@ class MeetingController extends GetxController with WindowListener, MultiWindowL
     }
   }
 
-  void quickEnterMeeting(String meetingID) async {
+  void quickEnterMeeting(String meetingID, {String? password}) async {
     if (MeetingClient().isBusy) {
       IMViews.showToast(StrRes.callingBusy);
       return;
@@ -254,7 +256,7 @@ class MeetingController extends GetxController with WindowListener, MultiWindowL
     final isEnableVideo = DataSp.getMeetingEnableVideo();
     final videoIsMirroring = DataSp.getMeetingEnableVideoMirroring();
 
-    final cert = await repository.joinMeeting(meetingID, userInfo.userId);
+    final cert = await repository.joinMeeting(meetingID, userInfo.userId, password: password);
 
     if (cert == null) {
       return;

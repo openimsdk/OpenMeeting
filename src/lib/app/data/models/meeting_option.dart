@@ -1,15 +1,16 @@
-
 class MeetingOptions {
   final bool enableMicrophone;
   final bool enableSpeaker;
   final bool enableVideo;
   final bool videoIsMirroring;
+  bool enableAudioEncouragement;
 
-  const MeetingOptions({
+  MeetingOptions({
     this.enableMicrophone = true,
     this.enableSpeaker = true,
     this.enableVideo = true,
     this.videoIsMirroring = false,
+    this.enableAudioEncouragement = false,
   });
 
   factory MeetingOptions.fromMap(Map<String, dynamic> json) => MeetingOptions(
@@ -17,6 +18,7 @@ class MeetingOptions {
         enableSpeaker: json['enableSpeaker'],
         enableVideo: json['enableVideo'],
         videoIsMirroring: json['videoIsMirroring'],
+        enableAudioEncouragement: json['enableAudioEncouragement'],
       );
 
   Map<String, dynamic> toMap() => {
@@ -24,5 +26,6 @@ class MeetingOptions {
         'enableSpeaker': enableSpeaker,
         'enableVideo': enableVideo,
         'videoIsMirroring': videoIsMirroring,
+        'enableAudioEncouragement': enableAudioEncouragement,
       };
 }

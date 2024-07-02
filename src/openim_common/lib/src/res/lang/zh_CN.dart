@@ -610,4 +610,9 @@ const Map<String, String> zh_CN = {
   'sunday': '星期日',
   'participantRemovedHit': '你已被请出会议。',
   'hasBeenSet': '已被设置',
+  'lockMeeting': '锁定会议',
+  'lockMeetingHint': '锁定会议后，新成员无法进入会议',
+  'voiceMotivation': '语音激励',
+  'voiceMotivationHint': '开启后，会优先显示正在说话的参会成员',
+  'meetingIsLocked': '会议已被锁定',
 };

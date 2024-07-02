@@ -60,10 +60,10 @@ class MeetingDetailController extends GetxController {
     IMUtils.copy(text: meetingInfo.meetingID);
   }
 
-  Future<String?> getMeetingPassword(String meetingID, String userID) async {
+  Future<({String? password, bool lockMeeting})> getMeetingPassword(String meetingID, String userID) async {
     final result = await repository.getMeetingInfo(meetingID, userID);
 
-    return result?.password;
+    return (password: result?.password, lockMeeting: result?.setting.lockMeeting ?? false);
   }
 
   enterMeeting() async {
@@ -79,8 +79,7 @@ class MeetingDetailController extends GetxController {
 
     final cert = await repository.getLiveKitToken(meetingInfo.meetingID, userInfo.userId);
     if (PlatformExt.isDesktop) {
-      windowsManager.newRoom(
-          UserInfo(userID: userInfo.userId, nickname: userInfo.nickname), cert, meetingInfo.meetingID);
+      windowsManager.newRoom(UserInfo(userID: userInfo.userId, nickname: userInfo.nickname), cert, meetingInfo.meetingID);
     } else {
       await MeetingClient().connect(Get.context!,
           url: cert.url,

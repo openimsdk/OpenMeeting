@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:openmeeting/app/data/models/meeting.pb.dart';
+import 'package:openmeeting/app/data/models/meeting_option.dart';
 import 'package:openmeeting/main.dart';
 import 'package:rxdart/rxdart.dart';
 import '../../../../../core/multi_window_manager.dart';
@@ -22,6 +23,7 @@ class MeetingRoomContainer extends StatefulWidget {
       required this.roomID,
       required this.listener,
       required this.room,
+      this.options,
       this.onOperation,
       this.onParticipantOperation});
 
@@ -30,6 +32,7 @@ class MeetingRoomContainer extends StatefulWidget {
   final String roomID;
   final EventsListener<RoomEvent> listener;
   final Room room;
+  final MeetingOptions? options;
   final void Function<T>(BuildContext? context, OperationType type, {T? value})? onOperation;
   final Future<bool> Function<T>({OperationParticipantType type, String userID, T to})? onParticipantOperation;
 
@@ -69,6 +72,7 @@ class _MeetingRoomContainerState extends State<MeetingRoomContainer> {
               this.meetingInfoChangedSubject = meetingInfoChangedSubject;
               this.participantsSubject = participantsSubject;
             },
+            options: widget.options,
           ),
         ),
         if (showParticipants)

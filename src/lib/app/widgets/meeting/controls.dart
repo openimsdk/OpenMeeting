@@ -43,7 +43,7 @@ class ControlsView extends StatefulWidget {
     this.onInviteMembers,
     this.startTimerCompleter,
     this.enableFullScreen = false,
-    this.options = const MeetingOptions(),
+    this.options,
     this.onOperation,
   });
 
@@ -57,7 +57,7 @@ class ControlsView extends StatefulWidget {
   final Function()? onInviteMembers;
   final Completer<bool>? startTimerCompleter;
   final bool enableFullScreen;
-  final MeetingOptions options;
+  final MeetingOptions? options;
   final UserInfo hostUserInfo;
 
   final void Function<T>(BuildContext? context, OperationType type, {T? value})? onOperation;
@@ -107,7 +107,7 @@ class _ControlsViewState extends State<ControlsView> {
     });
     Hardware.instance.enumerateDevices().then(_loadDevices);
 
-    _openSpeakerphone = widget.options.enableSpeaker;
+    _openSpeakerphone = widget.options?.enableSpeaker == true;
     _participant.addListener(_onChange);
     _meetingInfoChangedSub = widget.meetingInfoChangedSubject.listen(_onChangedMeetingInfo);
     widget.startTimerCompleter?.future.then((value) => _startCallingTimer());
@@ -399,10 +399,7 @@ class _ControlsViewState extends State<ControlsView> {
       context: context,
       child: (AnimationController? controller) => MeetingSettingsSheetView(
         controller: controller,
-        allowParticipantUnmute: setting?.canParticipantsUnmuteMicrophone == true,
-        allowParticipantVideo: setting?.canParticipantsEnableCamera == true,
-        onlyHostCanShareScreen: setting?.canParticipantsShareScreen == false,
-        joinMeetingDefaultMute: setting?.disableMicrophoneOnJoin == true,
+        setting: setting!,
         onConfirm: _confirmSettings,
       ),
     );

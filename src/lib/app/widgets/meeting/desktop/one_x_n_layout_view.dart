@@ -73,10 +73,12 @@ class _OxNLayoutViewState extends State<OxNLayoutView> {
       onDoubleTap: () {
         widget.onDoubleTap?.call(track);
       },
-      child: ParticipantWidget.widgetFor(track,
-          useScreenShareTrack: track.screenShareTrack != null && !track.screenShareTrack!.muted,
-          options: track.participant is LocalParticipant ? widget.options : null,
-          focusModel: true),
+      child: ParticipantWidget.widgetFor(
+        track,
+        useScreenShareTrack: track.screenShareTrack != null && !track.screenShareTrack!.muted,
+        options: widget.options,
+        focusModel: true,
+      ),
     );
   }
 }

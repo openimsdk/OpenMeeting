@@ -90,7 +90,7 @@ class _RoomConnectDesktopViewState extends State<RoomConnectDesktopView>
         url: _certificate.url,
         token: _certificate.token,
         roomID: _roomID,
-        options: widget.options ?? const MeetingOptions(),
+        options: widget.options,
       );
       loading.value = result == null ? _LoadingStatus.error : _LoadingStatus.success;
 
@@ -109,6 +109,7 @@ class _RoomConnectDesktopViewState extends State<RoomConnectDesktopView>
                 url: _certificate.url,
                 token: _certificate.token,
                 roomID: _roomID,
+                options: widget.options,
                 onOperation: MeetingClient().operateRoom,
                 onParticipantOperation: MeetingClient().operateParticipants,
               );
@@ -141,6 +142,14 @@ class _RoomConnectDesktopViewState extends State<RoomConnectDesktopView>
     final completer = Completer<bool>();
 
     final loginUserID = widget.userFullInfo.userID;
+
+    if (_room?.metadata == null) {
+      _closeWindowsHelper();
+      completer.complete(false);
+
+      return completer.future;
+    }
+
     final roomMetadata = (MeetingMetadata()..mergeFromProto3Json(jsonDecode(_room!.metadata!))).detail;
     MeetingPopMenu.showMeetingWidget(ctx ?? context,
         arrowDxOffset: Platform.isMacOS ? 0 : MediaQuery.of(context).size.width - 200,

@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:openim_common/openim_common.dart';
+import 'package:openmeeting/app/data/models/meeting.pb.dart';
 
 import '../../../data/models/define.dart';
 
 class RoomSettingPanel extends StatefulWidget {
-  const RoomSettingPanel(
-      {super.key,
-      this.onOperation,
-      required this.allowParticipantUnMute,
-      required this.allowParticipantVideo,
-      required this.onlyHostCanShareScreen,
-      required this.defaultMuted});
+  const RoomSettingPanel({super.key, this.onOperation, required this.setting});
 
-  final bool allowParticipantUnMute;
-  final bool allowParticipantVideo;
-  final bool onlyHostCanShareScreen;
-  final bool defaultMuted;
+  final MeetingSetting setting;
 
   final Future<bool?> Function(RoomSetting setting, bool to)? onOperation;
 
@@ -30,10 +22,31 @@ class _RoomSettingPanelState extends State<RoomSettingPanel> {
   void initState() {
     super.initState();
     items = [
-      Item(setting: RoomSetting.defaultMuted, title: StrRes.defaultMuteMembers, checked: widget.defaultMuted),
-      Item(setting: RoomSetting.allowParticipantUnMute, title: StrRes.allowMembersOpenMic, checked: widget.allowParticipantUnMute),
-      Item(setting: RoomSetting.allowParticipantVideo, title: StrRes.allowMembersOpenVideo, checked: widget.allowParticipantVideo),
-      Item(setting: RoomSetting.onlyHostCanShareScreen, title: StrRes.onlyHostShareScreen, checked: widget.onlyHostCanShareScreen),
+      Item(
+        setting: RoomSetting.lockMeeting,
+        title: StrRes.lockMeeting,
+        checked: widget.setting.lockMeeting,
+      ),
+      Item(
+          setting: RoomSetting.defaultMuted,
+          title: StrRes.defaultMuteMembers,
+          checked: widget.setting.disableMicrophoneOnJoin),
+      Item(
+          setting: RoomSetting.allowParticipantUnMute,
+          title: StrRes.allowMembersOpenMic,
+          checked: widget.setting.canParticipantsUnmuteMicrophone),
+      Item(
+          setting: RoomSetting.allowParticipantVideo,
+          title: StrRes.allowMembersOpenVideo,
+          checked: widget.setting.canParticipantsEnableCamera),
+      Item(
+          setting: RoomSetting.onlyHostCanShareScreen,
+          title: StrRes.onlyHostShareScreen,
+          checked: !widget.setting.canParticipantsShareScreen),
+      Item(
+          setting: RoomSetting.audioEncouragement,
+          title: StrRes.voiceMotivation,
+          checked: widget.setting.audioEncouragement),
     ];
   }
 
@@ -62,7 +75,7 @@ class _RoomSettingPanelState extends State<RoomSettingPanel> {
       children: [
         Checkbox(
           value: item.checked,
-          onChanged: (value) => onChanged(item.setting, value ?? false),
+          onChanged: (value) => onChanged(item.setting, !item.checked),
         ),
         Flexible(
           child: Text(

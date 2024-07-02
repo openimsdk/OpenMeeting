@@ -350,11 +350,7 @@ class _ParticipantsDesktopViewState extends ParticipantsViewState<ParticipantsDe
   }
 
   void _meetingRoomSetting(BuildContext ctx) {
-    MeetingPopMenu.showRoomSetting(ctx,
-        allowParticipantUnMute: setting?.canParticipantsUnmuteMicrophone == true,
-        allowParticipantVideo: setting?.canParticipantsEnableCamera == true,
-        onlyHostCanShareScreen: setting?.canParticipantsShareScreen == false,
-        defaultMuted: setting?.disableMicrophoneOnJoin == true, onOperation: (type, to) {
+    MeetingPopMenu.showRoomSetting(ctx, setting: setting!, onOperation: (type, to) {
       switch (type) {
         case RoomSetting.allowParticipantUnMute:
           setting?.canParticipantsUnmuteMicrophone = to;
@@ -363,10 +359,16 @@ class _ParticipantsDesktopViewState extends ParticipantsViewState<ParticipantsDe
           setting?.canParticipantsEnableCamera = to;
           break;
         case RoomSetting.onlyHostCanShareScreen:
-          setting?.canParticipantsShareScreen = to;
+          setting?.canParticipantsShareScreen = !to;
           break;
         case RoomSetting.defaultMuted:
           setting?.disableMicrophoneOnJoin = to;
+          break;
+        case RoomSetting.lockMeeting:
+          setting?.lockMeeting = to;
+          break;
+        case RoomSetting.audioEncouragement:
+          setting?.audioEncouragement = to;
           break;
       }
 

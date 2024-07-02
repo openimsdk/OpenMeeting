@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:openmeeting/app/data/models/meeting.pb.dart';
@@ -7,19 +8,11 @@ class MeetingSettingsSheetView extends StatefulWidget {
   const MeetingSettingsSheetView({
     super.key,
     this.controller,
-    this.allowParticipantUnmute = true,
-    this.allowParticipantVideo = true,
-    this.onlyHostCanInvite = false,
-    this.onlyHostCanShareScreen = true,
-    this.joinMeetingDefaultMute = true,
+    required this.setting,
     this.onConfirm,
   });
   final AnimationController? controller;
-  final bool allowParticipantUnmute;
-  final bool allowParticipantVideo;
-  final bool onlyHostCanShareScreen;
-  final bool onlyHostCanInvite;
-  final bool joinMeetingDefaultMute;
+  final MeetingSetting setting;
   final ValueChanged<MeetingSetting>? onConfirm;
 
   @override
@@ -27,73 +20,55 @@ class MeetingSettingsSheetView extends StatefulWidget {
 }
 
 class _MeetingSettingsSheetViewState extends State<MeetingSettingsSheetView> {
-  bool _allowParticipantUnmute = true;
-  bool _allowParticipantVideo = true;
-  bool _onlyHostCanShareScreen = true;
-  bool _onlyHostCanInvite = false;
-  bool _joinMeetingDefaultMute = true;
-
   @override
   void dispose() {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    _allowParticipantUnmute = widget.allowParticipantUnmute;
-    _allowParticipantVideo = widget.allowParticipantVideo;
-    _onlyHostCanShareScreen = widget.onlyHostCanShareScreen;
-    _onlyHostCanInvite = widget.onlyHostCanInvite;
-    _joinMeetingDefaultMute = widget.joinMeetingDefaultMute;
-    super.initState();
+  void _onLockMeeting(value) {
+    setState(() {
+      widget.setting.lockMeeting = value;
+    });
+  }
+
+  void _onAudioEncouragement(value) {
+    setState(() {
+      widget.setting.audioEncouragement = value;
+    });
   }
 
   _onAllowParticipantUnmute(value) {
     setState(() {
-      _allowParticipantUnmute = value;
+      widget.setting.canParticipantsUnmuteMicrophone = value;
     });
   }
 
   _onAllowParticipantVideo(value) {
     setState(() {
-      _allowParticipantVideo = value;
+      widget.setting.canParticipantsEnableCamera = value;
     });
   }
 
   _onOnlyHostCanShareScreen(value) {
     setState(() {
-      _onlyHostCanShareScreen = value;
+      widget.setting.canParticipantsShareScreen = value;
     });
   }
 
   _onJoinMeetingDefaultMute(value) {
     setState(() {
-      _joinMeetingDefaultMute = value;
+      widget.setting.disableMicrophoneOnJoin = value;
     });
   }
 
-  _onOnlyHostCanInvite(value) {
-    setState(() {
-      _onlyHostCanInvite = value;
-    });
-  }
-
-  _confirm() => widget.controller?.reverse().then(
-        (value) => widget.onConfirm?.call(
-          MeetingSetting(
-              canParticipantsUnmuteMicrophone: _allowParticipantUnmute,
-              canParticipantsEnableCamera: _allowParticipantVideo,
-              canParticipantsShareScreen: !_onlyHostCanShareScreen,
-              disableMicrophoneOnJoin: _joinMeetingDefaultMute),
-        ),
-      );
+  _confirm() => widget.controller?.reverse().then((value) => widget.onConfirm?.call(widget.setting));
 
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () {},
         child: Container(
           decoration: BoxDecoration(
-            color: Styles.c_FFFFFF,
+            color: Colors.grey.shade100,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(14.r),
               topRight: Radius.circular(14.r),
@@ -122,22 +97,43 @@ class _MeetingSettingsSheetViewState extends State<MeetingSettingsSheetView> {
                   )
                 ],
               ),
-              11.verticalSpace,
+              8.verticalSpace,
+              _buildItemView(
+                label: StrRes.lockMeeting,
+                value: widget.setting.lockMeeting,
+                subLabel: StrRes.lockMeetingHint,
+                onChanged: _onLockMeeting,
+              ),
+              8.verticalSpace,
+              _buildItemView(
+                label: StrRes.defaultMuteMembers,
+                value: widget.setting.disableMicrophoneOnJoin,
+                onChanged: _onJoinMeetingDefaultMute,
+              ),
+              8.verticalSpace,
               _buildItemView(
                 label: StrRes.allowMembersOpenMic,
-                value: _allowParticipantUnmute,
+                value: widget.setting.canParticipantsUnmuteMicrophone,
                 onChanged: _onAllowParticipantUnmute,
               ),
               _buildItemView(
                 label: StrRes.allowMembersOpenVideo,
-                value: _allowParticipantVideo,
+                value: widget.setting.canParticipantsEnableCamera,
                 onChanged: _onAllowParticipantVideo,
               ),
               _buildItemView(
                 label: StrRes.onlyHostShareScreen,
-                value: _onlyHostCanShareScreen,
+                value: widget.setting.canParticipantsShareScreen,
                 onChanged: _onOnlyHostCanShareScreen,
               ),
+              8.verticalSpace,
+              _buildItemView(
+                label: StrRes.voiceMotivation,
+                value: widget.setting.audioEncouragement,
+                subLabel: StrRes.voiceMotivationHint,
+                onChanged: _onAudioEncouragement,
+              ),
+              8.verticalSpace,
               /*
               _buildItemView(
                 label: StrRes.onlyHostInviteMember,
@@ -145,11 +141,6 @@ class _MeetingSettingsSheetViewState extends State<MeetingSettingsSheetView> {
                 onChanged: _onOnlyHostCanInvite,
               ),
                */
-              _buildItemView(
-                label: StrRes.defaultMuteMembers,
-                value: _joinMeetingDefaultMute,
-                onChanged: _onJoinMeetingDefaultMute,
-              ),
             ],
           ),
         ),
@@ -158,21 +149,37 @@ class _MeetingSettingsSheetViewState extends State<MeetingSettingsSheetView> {
   Widget _buildItemView({
     required String label,
     required bool value,
+    String? subLabel,
     ValueChanged<bool>? onChanged,
   }) =>
       Container(
-        height: 60.h,
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
-        child: Row(
+        color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: label.toText..style = Styles.ts_0C1C33_17sp,
+            Container(
+              height: 46.h,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: label.toText..style = Styles.ts_0C1C33_17sp,
+                  ),
+                  CupertinoSwitch(
+                    value: value,
+                    onChanged: onChanged,
+                    activeColor: Styles.c_0089FF,
+                  ),
+                ],
+              ),
             ),
-            CupertinoSwitch(
-              value: value,
-              onChanged: onChanged,
-              activeColor: Styles.c_0089FF,
-            ),
+            if (subLabel != null)
+              Text(
+                subLabel,
+                style: Styles.ts_8E9AB0_12sp,
+              ),
           ],
         ),
       );

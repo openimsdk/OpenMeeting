@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:openim_common/openim_common.dart';
-import 'package:openmeeting/app/data/models/pb_extension.dart';
 import 'package:openmeeting/app/widgets/meeting/desktop/meeting_alert_dialog.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:sprintf/sprintf.dart';
@@ -89,13 +88,13 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
     Logger.print('joinDisabledMicrophone: $joinDisabledMicrophone');
     // video will fail when running in ios simulator
     try {
-      final enable = !joinDisabledVideo && widget.options.enableVideo;
+      final enable = !joinDisabledVideo && (widget.options?.enableVideo == true);
       await widget.room.localParticipant?.setCameraEnabled(enable);
     } catch (error) {
       Logger.print('could not publish video: $error');
     }
     try {
-      final enable = !joinDisabledMicrophone && widget.options.enableMicrophone;
+      final enable = !joinDisabledMicrophone && (widget.options?.enableMicrophone == true);
       await widget.room.localParticipant?.setMicrophoneEnabled(enable);
     } catch (error) {
       Logger.print('could not publish audio: $error');
@@ -149,7 +148,7 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
     if (widget.room.metadata?.isNotEmpty == true) {
       meetingInfo = (MeetingMetadata()..mergeFromProto3Json(jsonDecode(widget.room.metadata!))).detail;
       meetingInfoChangedSubject.add(meetingInfo!);
-
+      widget.options?.enableAudioEncouragement = meetingInfo!.setting.audioEncouragement;
       setState(() {});
     }
   }
@@ -270,8 +269,11 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
             widget.room.remoteParticipants.isEmpty
                 ? (_localParticipantTrack == null
                     ? const SizedBox()
-                    : ParticipantWidget.widgetFor(_localParticipantTrack!, options: widget.options, isZoom: true, useScreenShareTrack: true,
-                        onTapSwitchCamera: () {
+                    : ParticipantWidget.widgetFor(_localParticipantTrack!,
+                        options: widget.options,
+                        isZoom: true,
+                        useScreenShareTrack: true,
+                        audioEncouragement: meetingInfo?.setting.audioEncouragement == true, onTapSwitchCamera: () {
                         _localParticipantTrack!.toggleCamera();
                       }))
                 : StatefulBuilder(
