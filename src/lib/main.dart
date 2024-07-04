@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,7 @@ void main(List<String> args) => Config.init(() async {
         windowManager.waitUntilReadyToShow(options, () async {
           await windowManager.show();
           await windowManager.focus();
-          await windowManager.setPreventClose(true);
+          await windowManager.setPreventClose(Platform.isMacOS);
           windowsManager.registerActiveWindow(kMainWindowId);
         });
 

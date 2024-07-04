@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:openmeeting/app/data/models/pb_extension.dart';
 
 import '../../models/define.dart';
@@ -14,7 +16,8 @@ class MeetingRepository implements IMeetingRepository {
     };
     final result = await Apis.getMeetings(params);
 
-    return List<MeetingInfoSetting>.from(result['meetingDetails']?.map((e) => MeetingInfoSetting()..mergeFromProto3Json(e)).toList() ?? []);
+    return List<MeetingInfoSetting>.from(
+        result['meetingDetails']?.map((e) => MeetingInfoSetting()..mergeFromProto3Json(e)).toList() ?? []);
   }
 
   @override
@@ -97,7 +100,8 @@ class MeetingRepository implements IMeetingRepository {
     };
     final result = await Apis.getMeetings(params);
 
-    return List<MeetingInfoSetting>.from(result['meetingDetails']?.map((e) => MeetingInfoSetting()..mergeFromProto3Json(e)).toList() ?? []);
+    return List<MeetingInfoSetting>.from(
+        result['meetingDetails']?.map((e) => MeetingInfoSetting()..mergeFromProto3Json(e)).toList() ?? []);
   }
 
   @override
@@ -146,11 +150,31 @@ class MeetingRepository implements IMeetingRepository {
   @override
   Future<bool> updateMeetingSetting(UpdateMeetingRequest request) async {
     final params = request.toProto3Json() as Map<String, dynamic>;
-    params['scheduledTime'] = request.scheduledTime.toInt();
-    params['meetingDuration'] = request.meetingDuration.toInt();
+    if (request.scheduledTime > 0) {
+      params['scheduledTime'] = request.scheduledTime.toInt();
+    }
+    if (request.meetingDuration > 0) {
+      params['meetingDuration'] = request.meetingDuration.toInt();
+    }
+
     final repeat = request.repeatInfo.toProto3Json() as Map<String, dynamic>;
+
     repeat['endDate'] = request.repeatInfo.endDate.toInt();
     repeat['repeatDaysOfWeek'] = request.repeatInfo.repeatDaysOfWeek.map((e) => e.value).toList();
+
+    List<String> keysToRemove = [];
+    final entries = repeat.entries;
+
+    for (var e in entries) {
+      if (e.value == null || e.value == 0 || e.value == '0') {
+        keysToRemove.add(e.key);
+      }
+    }
+
+    for (String key in keysToRemove) {
+      repeat.remove(key);
+    }
+
     params['repeatInfo'] = repeat;
 
     try {
@@ -187,7 +211,10 @@ class MeetingRepository implements IMeetingRepository {
 
   @override
   Future<bool> modifyParticipantName(
-      {required String meetingID, required String userID, required String participantUserID, required String nickname}) async {
+      {required String meetingID,
+      required String userID,
+      required String participantUserID,
+      required String nickname}) async {
     final params = {
       'meetingID': meetingID,
       'userID': userID,
@@ -205,7 +232,8 @@ class MeetingRepository implements IMeetingRepository {
   }
 
   @override
-  Future<bool> kickParticipant({required String meetingID, required String userID, required List<String> participantUserIDs}) async {
+  Future<bool> kickParticipant(
+      {required String meetingID, required String userID, required List<String> participantUserIDs}) async {
     final params = {
       'meetingID': meetingID,
       'userID': userID,
@@ -223,7 +251,10 @@ class MeetingRepository implements IMeetingRepository {
 
   @override
   Future<bool> setMeetingHost(
-      {required String meetingID, required String userID, required String hostUserID, required List<String> coHostUserIDs}) async {
+      {required String meetingID,
+      required String userID,
+      required String hostUserID,
+      required List<String> coHostUserIDs}) async {
     final params = {
       'meetingID': meetingID,
       'userID': userID,

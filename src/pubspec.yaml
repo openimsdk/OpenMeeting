@@ -63,7 +63,7 @@ dependencies:
   numberpicker: ^2.1.2
   dropdown_button2: ^3.0.0-beta.13
   fixnum: ^1.1.0
-
+  
   desktop_multi_window:
     path: 3rd/desktop_multi_window
   window_manager:

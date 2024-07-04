@@ -65,6 +65,8 @@ class MeetingClient {
       return;
     }
 
+    Navigator.of(Get.context!).popUntil((route) => route.isFirst);
+
     if (realClose) {
       await windowsManager.closeAllSubWindows();
     } else {
@@ -73,7 +75,6 @@ class MeetingClient {
       await controller.hide();
       await windowsManager.call(WindowType.room, WindowEvent.hide, {"id": kWindowId!});
     }
-    Navigator.of(Get.context!).popUntil((route) => route.isFirst);
 
     sendBusyMessage(false);
     busy = false;
@@ -124,7 +125,8 @@ class MeetingClient {
                   maxFramerate: 15,
                 )),
             defaultAudioOutputOptions: AudioOutputOptions(speakerOn: options?.enableSpeaker),
-            defaultScreenShareCaptureOptions: const ScreenShareCaptureOptions(useiOSBroadcastExtension: true, maxFrameRate: 15.0),
+            defaultScreenShareCaptureOptions:
+                const ScreenShareCaptureOptions(useiOSBroadcastExtension: true, maxFrameRate: 15.0),
           ),
         );
       });
@@ -218,7 +220,8 @@ class MeetingClient {
 
         return MeetingRepository().setPersonalSetting(roomID!, userID!, setting);
       case OperationParticipantType.muteAll:
-        final result = await MeetingRepository().operateAllStream(roomID!, loginUserID, microphoneOnEntry: !(to as bool));
+        final result =
+            await MeetingRepository().operateAllStream(roomID!, loginUserID, microphoneOnEntry: !(to as bool));
 
         return result;
       case OperationParticipantType.nickname:

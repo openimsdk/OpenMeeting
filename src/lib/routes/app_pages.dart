@@ -21,6 +21,7 @@ class AppPages {
     required GetPageBuilder page,
     Bindings? binding,
     bool preventDuplicates = true,
+    bool popGesture = true,
   }) =>
       GetPage(
         name: name,
@@ -28,7 +29,7 @@ class AppPages {
         binding: binding,
         preventDuplicates: preventDuplicates,
         transition: Transition.cupertino,
-        popGesture: true,
+        popGesture: popGesture,
       );
 
   static final pages = mainPages + subPages;
@@ -38,11 +39,13 @@ class AppPages {
       name: AppRoutes.splash,
       page: () => SplashPage(),
       binding: SplashBinding(),
+      popGesture: false,
     ),
     _pageBuilder(
       name: AppRoutes.login,
       page: () => LoginPage(),
       binding: LoginBinding(),
+      popGesture: false,
     ),
     _pageBuilder(
       name: AppRoutes.meetingSetup,

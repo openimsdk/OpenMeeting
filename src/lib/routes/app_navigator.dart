@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:openmeeting/routes/m_pages.dart';
 
 import 'app_pages.dart';
 import 'm_navigator.dart';

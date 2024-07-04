@@ -117,7 +117,7 @@ class _MeetingRoomContainerState extends State<MeetingRoomContainer> {
     });
   }
 
-  void _operateRoom<T>(BuildContext? context, OperationType type, {T? value}) async {
+  void _operateRoom<T>(BuildContext? ctx, OperationType type, {T? value}) async {
     if (type == OperationType.participants) {
       _showParticipants();
     } else {

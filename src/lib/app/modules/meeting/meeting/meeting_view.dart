@@ -19,13 +19,13 @@ import 'meeting_controller.dart';
 class MeetingPage extends GetView<MeetingController> {
   @override
   Widget build(BuildContext context) {
-    return FocusDetector(
-      onVisibilityGained: controller.queryUnfinishedMeeting,
-      child: Scaffold(
-        backgroundColor: Styles.c_FFFFFF,
-        body: PopScope(
-          canPop: false,
-          child: Stack(
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: FocusDetector(
+        onVisibilityGained: controller.queryUnfinishedMeeting,
+        child: Scaffold(
+          backgroundColor: Styles.c_FFFFFF,
+          body: Stack(
             children: [
               Align(
                 alignment: Alignment.topRight,
@@ -112,7 +112,6 @@ class MeetingPage extends GetView<MeetingController> {
                             child: StickyHeader(
                               child: CustomScrollView(
                                 physics: const AlwaysScrollableScrollPhysics(),
-                                shrinkWrap: true,
                                 slivers: [
                                   CupertinoSliverRefreshControl(
                                     onRefresh: controller.onRefresh,
