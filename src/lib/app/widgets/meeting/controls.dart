@@ -305,7 +305,7 @@ class _ControlsViewState extends State<ControlsView> {
     return SafeArea(
       child: Column(
         children: [
-          if (PlatformExt.isDesktop) SizedBox(height: 32),
+          if (Platform.isMacOS) const SizedBox(height: 32),
           Visibility(
               visible: !widget.enableFullScreen,
               child: PlatformExt.isDesktop
