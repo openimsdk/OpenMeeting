@@ -19,7 +19,7 @@ abstract class IMeetingRepository {
     throw UnimplementedError();
   }
 
-  Future<({LiveKit cert, MeetingInfoSetting info})> createMeeting(
+  Future<({LiveKit? cert, MeetingInfoSetting info})> createMeeting(
       {required CreateMeetingType type,
       required String creatorUserID,
       required CreatorDefinedMeetingInfo creatorDefinedMeetingInfo,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
@@ -99,7 +100,9 @@ class _MeetingRoomContainerState extends State<MeetingRoomContainer> {
   }
 
   Future<void> _showParticipants() async {
-    final isFullScreen = await WindowController.fromWindowId(kWindowId!).isFullScreen();
+    final isFullScreen = Platform.isMacOS
+        ? await WindowController.fromWindowId(kWindowId!).isFullScreen()
+        : await WindowController.fromWindowId(kWindowId!).isMaximized();
 
     if (!isFullScreen) {
       var bounds = await WindowController.fromWindowId(kWindowId!).getFrame();

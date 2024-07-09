@@ -103,7 +103,9 @@ class ApiService {
         if (result.errCode == 0) {
           return result.data;
         } else {
-          return Future.error(result.errMsg);
+          final exception = ApiException(code: result.errCode, message: result.errMsg);
+
+          return Future.error(exception);
         }
       }
 
@@ -159,4 +161,11 @@ class ApiResponse {
   String toString() {
     return jsonEncode(this);
   }
+}
+
+class ApiException implements Exception {
+  final int code;
+  final String? message;
+
+  ApiException({required this.code, this.message});
 }

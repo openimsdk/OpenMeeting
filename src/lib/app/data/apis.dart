@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:openmeeting/app/data/models/user_info.dart';
 import 'package:openmeeting/core/api_service.dart';
@@ -37,7 +38,7 @@ class Apis {
 
       return userInfo;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
     }
@@ -74,7 +75,7 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
     }
@@ -91,7 +92,7 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
     }
@@ -105,7 +106,7 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
     }
@@ -119,7 +120,7 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
     }
@@ -133,7 +134,7 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return null;
     }
@@ -156,7 +157,7 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
     }
@@ -173,7 +174,7 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
     }
@@ -190,7 +191,7 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
     }
@@ -207,7 +208,7 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
     }
@@ -224,7 +225,7 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
     }
@@ -241,7 +242,7 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
     }
@@ -258,7 +259,7 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
     }
@@ -275,8 +276,8 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
-      
+      _catchError(e, s);
+
       return Future.error(e);
     }
   }
@@ -292,9 +293,21 @@ class Apis {
 
       return result;
     } catch (e, s) {
-      IMViews.showToast(e.toString());
+      _catchError(e, s);
 
       return Future.error(e);
+    }
+  }
+
+  static void _catchError(Object e, StackTrace s) {
+    if (e is ApiException) {
+      var msg = '${e.code}'.tr;
+      if (msg.isEmpty) {
+        msg = e.message ?? 'Unkonw error';
+      }
+      IMViews.showToast(msg);
+    } else {
+      IMViews.showToast(e.toString());
     }
   }
 }

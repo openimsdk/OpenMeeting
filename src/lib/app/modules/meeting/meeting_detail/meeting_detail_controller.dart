@@ -66,7 +66,7 @@ class MeetingDetailController extends GetxController {
     return (password: result?.password, lockMeeting: result?.setting.lockMeeting ?? false);
   }
 
-  enterMeeting() async {
+  enterMeeting(String? password) async {
     if (MeetingClient().isBusy) {
       IMViews.showToast(StrRes.callingBusy);
       return;
@@ -77,9 +77,15 @@ class MeetingDetailController extends GetxController {
     final isEnableVideo = DataSp.getMeetingEnableVideo();
     final videoIsMirroring = DataSp.getMeetingEnableVideoMirroring();
 
-    final cert = await repository.getLiveKitToken(meetingInfo.meetingID, userInfo.userId);
+    final cert = await repository.joinMeeting(meetingInfo.meetingID, userInfo.userId, password: password);
+
+    if (cert == null) {
+      return;
+    }
+
     if (PlatformExt.isDesktop) {
-      windowsManager.newRoom(UserInfo(userID: userInfo.userId, nickname: userInfo.nickname), cert, meetingInfo.meetingID);
+      windowsManager.newRoom(
+          UserInfo(userID: userInfo.userId, nickname: userInfo.nickname), cert, meetingInfo.meetingID);
     } else {
       await MeetingClient().connect(Get.context!,
           url: cert.url,

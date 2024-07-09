@@ -150,7 +150,7 @@ class MeetingDetailPage extends GetView<MeetingDetailController> {
     final info = controller.meetingInfo;
 
     if (info.creatorUserID == controller.userInfo.userId) {
-      controller.enterMeeting();
+      controller.enterMeeting(null);
 
       return;
     }
@@ -164,17 +164,18 @@ class MeetingDetailPage extends GetView<MeetingDetailController> {
     }
 
     if (meeting.password?.isEmpty == true) {
-      controller.enterMeeting();
+      controller.enterMeeting(null);
 
       return;
     }
-    MeetingAlertDialog.showEnterMeetingWithPasswordDialog(Get.context!, info.creatorNickname, onConfirm: (password) async {
+    MeetingAlertDialog.showEnterMeetingWithPasswordDialog(Get.context!, info.creatorNickname,
+        onConfirm: (password) async {
       final result = meeting.password == password;
 
       if (!result) {
         IMViews.showToast(StrRes.wrongMeetingPassword);
       } else {
-        controller.enterMeeting();
+        controller.enterMeeting(password);
       }
     });
   }

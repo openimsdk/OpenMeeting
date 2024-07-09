@@ -35,7 +35,7 @@ class MeetingRepository implements IMeetingRepository {
   }
 
   @override
-  Future<({LiveKit cert, MeetingInfoSetting info})> createMeeting(
+  Future<({LiveKit? cert, MeetingInfoSetting info})> createMeeting(
       {required CreateMeetingType type,
       required String creatorUserID,
       required CreatorDefinedMeetingInfo creatorDefinedMeetingInfo,
@@ -63,18 +63,20 @@ class MeetingRepository implements IMeetingRepository {
     if (type == CreateMeetingType.quick) {
       final result = await Apis.quicklyMeeting(params);
       final setting = CreateImmediateMeetingResp()..mergeFromProto3Json(result);
-      final cert = await getLiveKitToken(setting.detail.meetingID, setting.detail.creatorUserID);
+      final joinResult = await joinMeeting(setting.detail.meetingID, creatorUserID);
+      final cert = joinResult == null ? null : LiveKit()
+        ?..mergeFromProto3Json(joinResult);
 
       return (cert: cert, info: setting.detail);
     } else if (type == CreateMeetingType.booking) {
       final result = await Apis.bookingMeeting(params);
       final setting = BookMeetingResp()..mergeFromProto3Json(result);
-      final cert = await getLiveKitToken(setting.detail.meetingID, setting.detail.creatorUserID);
 
-      return (cert: cert, info: setting.detail);
+      return (cert: null, info: setting.detail);
     } else {
       final result = await Apis.joinMeeting(params);
-      final cert = LiveKit()..mergeFromProto3Json(result);
+      final cert = result == null ? null : LiveKit()
+        ?..mergeFromProto3Json(result);
 
       return (cert: cert, info: MeetingInfoSetting());
     }

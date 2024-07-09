@@ -227,13 +227,16 @@ class MeetingController extends GetxController with WindowListener {
           disableMicrophoneOnJoin: false),
     );
 
+    if (result.cert == null) {
+      return;
+    }
     if (PlatformExt.isDesktop) {
-      windowsManager.newRoom(userInfo.toPBUser(), result.cert, result.info.meetingID);
+      windowsManager.newRoom(userInfo.toPBUser(), result.cert!, result.info.meetingID);
     } else {
       MeetingClient().connect(
         Get.context!,
-        url: result.cert.url,
-        token: result.cert.token,
+        url: result.cert!.url,
+        token: result.cert!.token,
         roomID: result.info.meetingID,
         options: MeetingOptions(
           enableMicrophone: isEnableMicrophone,
