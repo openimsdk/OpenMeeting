@@ -277,28 +277,20 @@ class MeetingPage extends GetView<MeetingController> {
                     ..overflow = TextOverflow.ellipsis,
               ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                showCheckPasswordDialog(meetingInfo);
-              },
-              style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(Styles.c_0089FF),
-                  padding: WidgetStateProperty.all(EdgeInsets.zero),
-                  shape: WidgetStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(2.r),
-                    ),
+            SizedBox(
+              width: 64,
+              height: 32,
+              child: CupertinoButton.filled(
+                  padding: EdgeInsets.zero,
+                  borderRadius: BorderRadius.circular(2),
+                  child: Text(
+                    StrRes.enter,
+                    style: Styles.ts_FFFFFF_17sp,
                   ),
-                  minimumSize: WidgetStateProperty.all(
-                    const Size(64, 32),
-                  ),
-                  maximumSize: WidgetStateProperty.all(const Size(64, 32)),
-                  textStyle: WidgetStateProperty.all(Styles.ts_FFFFFF_17sp)),
-              child: Text(
-                StrRes.enter,
-                style: Styles.ts_FFFFFF_17sp,
-              ),
-            )
+                  onPressed: () {
+                    showCheckPasswordDialog(meetingInfo);
+                  }),
+            ),
           ],
         ),
       ),
