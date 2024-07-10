@@ -615,7 +615,9 @@ const Map<String, String> en_US = {
   'voiceMotivation': 'Voice Motivation',
   'voiceMotivationHint': 'When enabled, the participants who are speaking will be displayed first.',
   'meetingIsLocked': 'The meeting is locked.',
+  'today': 'Today',
 
+  '10000': 'User not found',
   '10001': 'User has already registered',
   '10002': 'Password error',
   '10003': 'Not found user account',

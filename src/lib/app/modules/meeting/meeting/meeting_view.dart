@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:easy_sticky_header/easy_sticky_header.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:openim_common/openim_common.dart';
@@ -110,15 +113,7 @@ class MeetingPage extends GetView<MeetingController> {
                     () => controller.meetingInfoList.isNotEmpty
                         ? Flexible(
                             child: StickyHeader(
-                              child: CustomScrollView(
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                slivers: [
-                                  CupertinoSliverRefreshControl(
-                                    onRefresh: controller.onRefresh,
-                                  ),
-                                  _buildList()
-                                ],
-                              ),
+                              child: _buildStickyBody(),
                             ),
                           )
                         : Center(
@@ -144,21 +139,21 @@ class MeetingPage extends GetView<MeetingController> {
                 right: 16.w,
                 child: SizedBox(
                   width: 78.w,
-                  height: 25.h,
+                  height: 25,
                   child: ElevatedButton(
                     onPressed: () {
                       MNavigator.startHistory();
                     },
-                    child: Text(
-                      StrRes.meetingHistory,
-                      style: Styles.ts_0C1C33_12sp,
-                    ),
                     style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all(Styles.c_E8EAEF),
                         shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))),
                         textStyle: WidgetStateProperty.all(Styles.ts_0C1C33_12sp),
                         foregroundColor: WidgetStateProperty.all(Styles.c_0C1C33),
                         padding: WidgetStateProperty.all(EdgeInsets.zero)),
+                    child: Text(
+                      StrRes.meetingHistory,
+                      style: Styles.ts_0C1C33_12sp,
+                    ),
                   ),
                 ),
               ),
@@ -167,6 +162,26 @@ class MeetingPage extends GetView<MeetingController> {
         ),
       ),
     );
+  }
+
+  Widget _buildStickyBody() {
+    return Platform.isAndroid
+        ? RefreshIndicator(
+            onRefresh: controller.onRefresh,
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [_buildList()],
+            ),
+          )
+        : CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              CupertinoSliverRefreshControl(
+                onRefresh: controller.onRefresh,
+              ),
+              _buildList()
+            ],
+          );
   }
 
   Widget _buildList() {
@@ -197,7 +212,7 @@ class MeetingPage extends GetView<MeetingController> {
         height: 40.h,
         child: Text(
           model.dateStr ?? '',
-          style: Styles.ts_0C1C33_17sp,
+          style: Styles.ts_0C1C33_17sp_medium,
         ),
       ),
     );
@@ -210,8 +225,8 @@ class MeetingPage extends GetView<MeetingController> {
       onTap: () => controller.meetingDetail(meetingInfo),
       behavior: HitTestBehavior.translucent,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10.h),
-        margin: EdgeInsets.only(bottom: 10.h),
+        height: 98,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -235,9 +250,9 @@ class MeetingPage extends GetView<MeetingController> {
                             : Colors.orangeAccent.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(2),
                       ),
-                      padding: EdgeInsets.symmetric(
-                        vertical: 1.h,
-                        horizontal: 5.w,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 1,
+                        horizontal: 5,
                       ),
                       child: controller.isStartedMeeting(meetingInfo)
                           ? (StrRes.started.toText..style = Styles.ts_0089FF_12sp)
@@ -245,14 +260,19 @@ class MeetingPage extends GetView<MeetingController> {
                     ),
                   ],
                 ),
-                4.verticalSpace,
+                const SizedBox(
+                  height: 6,
+                ),
                 controller.getMeetingDuration(meetingInfo).toText
-                  ..style = Styles.ts_8E9AB0_13sp
+                  ..style = Styles.ts_8E9AB0_14sp
                   ..maxLines = 1
                   ..overflow = TextOverflow.ellipsis,
+                const SizedBox(
+                  height: 6,
+                ),
                 if (meetingInfo.creatorNickname.isNotEmpty)
                   sprintf(StrRes.meetingOrganizerIs, [meetingInfo.creatorNickname]).toText
-                    ..style = Styles.ts_8E9AB0_13sp
+                    ..style = Styles.ts_8E9AB0_14sp
                     ..maxLines = 1
                     ..overflow = TextOverflow.ellipsis,
               ],
@@ -270,9 +290,9 @@ class MeetingPage extends GetView<MeetingController> {
                     ),
                   ),
                   minimumSize: WidgetStateProperty.all(
-                    Size(64.w, 32.h),
+                    const Size(64, 32),
                   ),
-                  maximumSize: WidgetStateProperty.all(Size(64.w, 32.h)),
+                  maximumSize: WidgetStateProperty.all(const Size(64, 32)),
                   textStyle: WidgetStateProperty.all(Styles.ts_FFFFFF_17sp)),
               child: Text(
                 StrRes.enter,

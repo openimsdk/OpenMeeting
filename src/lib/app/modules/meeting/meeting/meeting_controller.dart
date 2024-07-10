@@ -151,7 +151,9 @@ class MeetingController extends GetxController with WindowListener {
     List<MeetingInfoExt> groupedMeetings = [];
 
     groupedMap.forEach((date, meetings) {
-      groupedMeetings.add(MeetingInfoExt(isHeader: true, dateStr: date));
+      final isToday = DateUtil.isToday(meetings.first.scheduledTime);
+
+      groupedMeetings.add(MeetingInfoExt(isHeader: true, dateStr: isToday ? '${StrRes.today} $date' : date));
       groupedMeetings.addAll(
         meetings.map((meeting) => MeetingInfoExt(meetingInfo: meeting)).toList(),
       );

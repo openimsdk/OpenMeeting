@@ -41,6 +41,22 @@ class MeetingRepository implements IMeetingRepository {
       required CreatorDefinedMeetingInfo creatorDefinedMeetingInfo,
       required MeetingSetting setting,
       MeetingRepeatInfo? repeatInfo}) async {
+    Map<String, dynamic>? repeat;
+    if (repeatInfo != null) {
+      repeat = repeatInfo.toProto3Json() as Map<String, dynamic>;
+      List<String> keysToRemove = [];
+      final entries = repeat.entries;
+
+      for (var e in entries) {
+        if (e.value == null || e.value == 0 || e.value == '0') {
+          keysToRemove.add(e.key);
+        }
+      }
+
+      for (String key in keysToRemove) {
+        repeat.remove(key);
+      }
+    }
     final params = {
       'creatorUserID': creatorUserID,
       'creatorDefinedMeetingInfo': {
@@ -52,10 +68,10 @@ class MeetingRepository implements IMeetingRepository {
         'password': creatorDefinedMeetingInfo.password,
       },
       'setting': setting.toProto3Json(),
-      if (repeatInfo != null)
+      if (repeat != null)
         'repeatInfo': {
-          ...repeatInfo.toProto3Json() as Map,
-          'endDate': repeatInfo.endDate.toInt(),
+          ...repeat,
+          if (repeatInfo!.endDate != 0) 'endDate': repeatInfo.endDate.toInt(),
           'repeatDaysOfWeek': repeatInfo.repeatDaysOfWeek.map((e) => e.value).toList()
         },
     };
@@ -63,11 +79,8 @@ class MeetingRepository implements IMeetingRepository {
     if (type == CreateMeetingType.quick) {
       final result = await Apis.quicklyMeeting(params);
       final setting = CreateImmediateMeetingResp()..mergeFromProto3Json(result);
-      final joinResult = await joinMeeting(setting.detail.meetingID, creatorUserID);
-      final cert = joinResult == null ? null : LiveKit()
-        ?..mergeFromProto3Json(joinResult);
 
-      return (cert: cert, info: setting.detail);
+      return (cert: setting.liveKit, info: setting.detail);
     } else if (type == CreateMeetingType.booking) {
       final result = await Apis.bookingMeeting(params);
       final setting = BookMeetingResp()..mergeFromProto3Json(result);

@@ -1,6 +1,7 @@
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:openim_common/openim_common.dart';
 import 'package:openmeeting/app/data/models/meeting.pb.dart';
 import 'package:openmeeting/app/data/models/pb_extension.dart';
 import 'package:openmeeting/core/extension.dart';
@@ -94,7 +95,9 @@ class HistoryController extends GetxController {
 
   void searchMeeting(String keywords) async {
     final result = sourceMeetings
-        .where((e) => !e.isHeader && (e.meetingInfo!.meetingName.contains(keywords) || e.meetingInfo!.creatorNickname.contains(keywords)))
+        .where((e) =>
+            !e.isHeader &&
+            (e.meetingInfo!.meetingName.contains(keywords) || e.meetingInfo!.creatorNickname.contains(keywords)))
         .map((e) => e.meetingInfo!)
         .toList();
     final r = _groupMeetingsByDate(result);
@@ -121,7 +124,9 @@ class HistoryController extends GetxController {
     List<MeetingInfoExt> groupedMeetings = [];
 
     groupedMap.forEach((date, meetings) {
-      groupedMeetings.add(MeetingInfoExt(isHeader: true, dateStr: date));
+      final isToday = DateUtil.isToday(meetings.first.scheduledTime);
+
+      groupedMeetings.add(MeetingInfoExt(isHeader: true, dateStr: isToday ? '${StrRes.today} $date' : date));
       groupedMeetings.addAll(
         meetings.map((meeting) => MeetingInfoExt(meetingInfo: meeting)).toList(),
       );
