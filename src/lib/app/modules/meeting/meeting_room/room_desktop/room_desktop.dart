@@ -104,6 +104,14 @@ class _MeetingRoomState extends MeetingViewState<MeetingDesktopRoom> {
     final map = jsonDecode(jsonStr);
     final result = NotifyMeetingData()..mergeFromProto3Json(map);
     Logger.print('participant: ${event.participant?.identity} metadata: $map');
+
+    // kickofff
+    if (result.kickOffMeetingData.isKickOff) {
+      widget.room.disconnect();
+      widget.onOperation?.call(context, OperationType.kickOff);
+      return;
+    }
+
     final streamOperateData = result.streamOperateData;
 
     if (streamOperateData.operation.isEmpty || result.operatorUserID == widget.room.localParticipant?.identity) {

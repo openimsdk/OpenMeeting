@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:openmeeting/app/data/models/pb_extension.dart';
+import 'package:openmeeting/routes/m_navigator.dart';
 import 'package:sprintf/sprintf.dart';
 
 import 'history_controller.dart';
@@ -21,8 +22,9 @@ class HistoryPage extends GetView<HistoryController> {
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 16),
             child: CupertinoSearchTextField(
+              borderRadius: BorderRadius.circular(6),
               controller: controller.searchController,
             ),
           ),
@@ -79,7 +81,9 @@ class HistoryPage extends GetView<HistoryController> {
     final meetingInfo = controller.meetingInfoList[index].meetingInfo!;
 
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        MNavigator.startHistoryDetail(meetingInfo);
+      },
       behavior: HitTestBehavior.translucent,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10.h),

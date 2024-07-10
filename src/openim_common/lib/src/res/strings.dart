@@ -1182,4 +1182,5 @@ class StrRes {
   static String get voiceMotivationHint => 'voiceMotivationHint'.tr;
   static String get meetingIsLocked => 'meetingIsLocked'.tr;
   static String get today => 'today'.tr;
+  static String get meetingIsEnded => 'meetingIsEnded'.tr;
 }

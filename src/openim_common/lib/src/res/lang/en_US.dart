@@ -616,6 +616,7 @@ const Map<String, String> en_US = {
   'voiceMotivationHint': 'When enabled, the participants who are speaking will be displayed first.',
   'meetingIsLocked': 'The meeting is locked.',
   'today': 'Today',
+  'meetingIsEnded': 'The meeting has ended.',
 
   '10000': 'User not found',
   '10001': 'User has already registered',
@@ -626,4 +627,6 @@ const Map<String, String> en_US = {
   '20002': 'Password not match error',
   '20003': 'Meeting auth check permission error',
   '20004': 'Meeting update check error',
+  '10010': 'The login status has expired and you need to log in again',
+
 };

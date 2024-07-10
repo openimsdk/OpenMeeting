@@ -57,4 +57,9 @@ class MNavigator {
         if (maxLimit != null) 'maxLimit': maxLimit.toString()
       });
   static startHistory() => Get.toNamed(MRoutes.history);
+
+  static startHistoryDetail(MeetingInfoSetting meetingInfo) => Get.toNamed(
+        MRoutes.historyDetail,
+        arguments: {'meetingInfo': meetingInfo},
+      );
 }

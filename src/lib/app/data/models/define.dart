@@ -121,7 +121,7 @@ extension WindowTypeExt on WindowType {
   }
 }
 
-enum OperationType { participants, roomSettings, leave, end, setting, onlyClose } // case setting for app setting
+enum OperationType { participants, roomSettings, leave, end, setting, onlyClose, kickOff } // case setting for app setting
 
 enum OperationParticipantType {
   pined,

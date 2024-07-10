@@ -199,4 +199,5 @@ class ImageRes {
   static const meetingSettings = '$_dir/ic_meeting_settings.webp';
   static const meetingListEmpty = '$_dir/ic_meeting_list_empty.webp';
   static const meetingLoginLogo = '$_dir/ic_meeting_login_logo.webp';
+  static const meetingHistoryDetailIcon = '$_dir/ic_history_detail_icon.webp';
 }

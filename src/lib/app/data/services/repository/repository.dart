@@ -1,6 +1,4 @@
-import 'dart:math';
-
-import 'package:openmeeting/app/data/models/pb_extension.dart';
+import 'package:openmeeting/core/extension.dart';
 
 import '../../models/define.dart';
 import '../../models/meeting.pb.dart';
@@ -61,9 +59,7 @@ class MeetingRepository implements IMeetingRepository {
       'creatorUserID': creatorUserID,
       'creatorDefinedMeetingInfo': {
         'title': creatorDefinedMeetingInfo.title,
-        'scheduledTime': creatorDefinedMeetingInfo.scheduledTime.toString().length > 10
-            ? creatorDefinedMeetingInfo.scheduledTime.toInt() ~/ 1000
-            : creatorDefinedMeetingInfo.scheduledTime.toInt(),
+        'scheduledTime': creatorDefinedMeetingInfo.scheduledTime.toInt().ensureTenDigits(),
         'meetingDuration': creatorDefinedMeetingInfo.meetingDuration.toInt(),
         'password': creatorDefinedMeetingInfo.password,
       },
@@ -71,7 +67,7 @@ class MeetingRepository implements IMeetingRepository {
       if (repeat != null)
         'repeatInfo': {
           ...repeat,
-          if (repeatInfo!.endDate != 0) 'endDate': repeatInfo.endDate.toInt(),
+          if (repeatInfo!.endDate != 0) 'endDate': repeatInfo.endDate.toInt().ensureTenDigits(),
           'repeatDaysOfWeek': repeatInfo.repeatDaysOfWeek.map((e) => e.value).toList()
         },
     };
@@ -166,7 +162,7 @@ class MeetingRepository implements IMeetingRepository {
   Future<bool> updateMeetingSetting(UpdateMeetingRequest request) async {
     final params = request.toProto3Json() as Map<String, dynamic>;
     if (request.scheduledTime > 0) {
-      params['scheduledTime'] = request.scheduledTime.toInt();
+      params['scheduledTime'] = request.scheduledTime.toInt().ensureTenDigits();
     }
     if (request.meetingDuration > 0) {
       params['meetingDuration'] = request.meetingDuration.toInt();
@@ -174,7 +170,7 @@ class MeetingRepository implements IMeetingRepository {
 
     final repeat = request.repeatInfo.toProto3Json() as Map<String, dynamic>;
 
-    repeat['endDate'] = request.repeatInfo.endDate.toInt();
+    repeat['endDate'] = request.repeatInfo.endDate.toInt().ensureTenDigits();
     repeat['repeatDaysOfWeek'] = request.repeatInfo.repeatDaysOfWeek.map((e) => e.value).toList();
 
     List<String> keysToRemove = [];

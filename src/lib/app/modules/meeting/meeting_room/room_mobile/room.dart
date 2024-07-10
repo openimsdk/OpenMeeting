@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:openim_common/openim_common.dart';
+import 'package:openmeeting/app/data/models/pb_extension.dart';
 import 'package:openmeeting/app/widgets/meeting/desktop/meeting_alert_dialog.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:sprintf/sprintf.dart';
@@ -21,7 +22,8 @@ import '../../../../widgets/meeting/participant_info.dart';
 import '../meeting_client.dart';
 
 class MeetingRoom extends MeetingView {
-  const MeetingRoom(super.room, super.listener, {super.key, required super.roomID, super.onParticipantOperation, super.onOperation, super.options});
+  const MeetingRoom(super.room, super.listener,
+      {super.key, required super.roomID, super.onParticipantOperation, super.onOperation, super.options});
 
   @override
   MeetingViewState<MeetingRoom> createState() => _MeetingRoomState();
@@ -106,6 +108,14 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
     final map = jsonDecode(jsonStr);
     final result = NotifyMeetingData()..mergeFromProto3Json(map);
     Logger.print('participant: ${event.participant?.identity} metadata: $map');
+
+    // kickofff
+    if (result.kickOffMeetingData.isKickOff) {
+      widget.room.disconnect();
+      widget.onOperation?.call(context, OperationType.kickOff);
+      return;
+    }
+
     final streamOperateData = result.streamOperateData;
 
     if (streamOperateData.operation.isEmpty || result.operatorUserID == widget.room.localParticipant?.identity) {
@@ -258,8 +268,9 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
     return count;
   }
 
-  int get pageCount => _fixPages((participantTracks.length % 4 == 0 ? participantTracks.length ~/ 4 : participantTracks.length ~/ 4 + 1) +
-      (null == _firstParticipantTrack ? 0 : 1));
+  int get pageCount => _fixPages(
+      (participantTracks.length % 4 == 0 ? participantTracks.length ~/ 4 : participantTracks.length ~/ 4 + 1) +
+          (null == _firstParticipantTrack ? 0 : 1));
 
   @override
   Widget buildChild() => Container(

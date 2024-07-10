@@ -1,4 +1,5 @@
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -40,15 +41,15 @@ class MeetingClient {
 
   String? roomID;
 
-  VoidCallback? onClose;
+  ValueChanged<bool>? onClose;
 
-  void close() async {
+  void close({bool kickoff = false}) async {
     if (PlatformExt.isDesktop) {
       return;
     }
 
     roomID = null;
-    onClose?.call();
+    onClose?.call(kickoff);
 
     if (_holder != null) {
       _holder?.remove();
@@ -60,7 +61,7 @@ class MeetingClient {
     if (await WakelockPlus.enabled) WakelockPlus.disable();
   }
 
-  void closeWindow({bool realClose = false}) async {
+  void closeWindow({bool realClose = false, bool kickoff = false}) async {
     if (PlatformExt.isMobile) {
       return;
     }
@@ -78,6 +79,9 @@ class MeetingClient {
 
     sendBusyMessage(false);
     busy = false;
+    if (kickoff) {
+      sendKickoffMessage();
+    }
   }
 
   void sendBusyMessage(bool b) {
@@ -85,6 +89,13 @@ class MeetingClient {
       return;
     }
     windowsManager.call(WindowType.main, WindowEvent.sendMessage, {'isBusy': b});
+  }
+
+  void sendKickoffMessage() {
+    if (!PlatformExt.isDesktop) {
+      return;
+    }
+    windowsManager.call(WindowType.main, WindowEvent.sendMessage, {'isKickoff': true});
   }
 
   Future<({EventsListener<RoomEvent> listener, Room room})?> connect(
@@ -198,6 +209,10 @@ class MeetingClient {
         break;
       case OperationType.onlyClose:
         closeWindow();
+        break;
+      case OperationType.kickOff:
+        close(kickoff: true);
+        closeWindow(kickoff: true);
         break;
     }
   }

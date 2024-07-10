@@ -11,3 +11,17 @@ extension StringExt on String {
 extension DateTimeExt on DateTime {
   int get secondsSinceEpoch => millisecondsSinceEpoch ~/ 1000;
 }
+
+extension IntExt on int {
+  int ensureTenDigits() {
+    String numberStr = toString();
+
+    if (numberStr.length == 10) {
+      return this;
+    } else if (numberStr.length > 10) {
+      return int.parse(numberStr.substring(0, 10));
+    } else {
+      return int.parse(numberStr.padLeft(10, '0'));
+    }
+  }
+}

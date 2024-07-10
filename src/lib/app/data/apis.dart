@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:openmeeting/app/data/models/user_info.dart';
 import 'package:openmeeting/core/api_service.dart';
+import 'package:openmeeting/routes/app_navigator.dart';
 
 import '../../core/data_sp.dart';
 import 'urls.dart';
@@ -306,6 +307,11 @@ class Apis {
         msg = e.message ?? 'Unkonw error';
       }
       IMViews.showToast(msg);
+
+      if (e.code == 10010) {
+        DataSp.removeLoginCertificate();
+        AppNavigator.startBackLogin();
+      }
     } else {
       IMViews.showToast(e.toString());
     }

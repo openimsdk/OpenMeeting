@@ -57,7 +57,7 @@ class _DesktopViewState extends State<DesktopView> {
     _ModelItem(title: RepeatType.weekly.title, value: RepeatType.weekly),
     _ModelItem(title: RepeatType.biweekly.title, value: RepeatType.biweekly),
     _ModelItem(title: RepeatType.monthly.title, value: RepeatType.monthly),
-    _ModelItem(title: RepeatType.custom.title, value: RepeatType.custom),
+    // _ModelItem(title: RepeatType.custom.title, value: RepeatType.custom),
   ];
   late ValueNotifier<String> repeatModelsValueListenable;
 

@@ -616,6 +616,7 @@ const Map<String, String> zh_CN = {
   'voiceMotivationHint': '开启后，会优先显示正在说话的参会成员',
   'meetingIsLocked': '会议已被锁定',
   'today': '今天',
+  'meetingIsEnded': '会议已结束',
 
   '10001': '账号已注册',
   '10002': '密码错误',
@@ -625,4 +626,5 @@ const Map<String, String> zh_CN = {
   '20002': '密码不匹配',
   '20003': '没有权限',
   '20004': '会议更新失败',
+  '10010': '登录状态已失效，需要重新登录',
 };

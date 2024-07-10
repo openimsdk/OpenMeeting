@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:get/get.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:openmeeting/app/data/models/meeting.pb.dart';
 import 'package:openmeeting/app/data/models/pb_extension.dart';
 import 'package:openmeeting/core/app_controller.dart';
 import 'package:openmeeting/core/extension.dart';
+import 'package:openmeeting/routes/app_navigator.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:common_utils/common_utils.dart';
@@ -46,7 +46,15 @@ class MeetingController extends GetxController with WindowListener {
       if (call.method == WindowEvent.sendMessage.rawValue) {
         final params = Map<String, dynamic>.from(call.arguments);
         final isBusy = params['isBusy'];
+        final isKickoff = params['isKickoff'];
 
+        if (isKickoff != null) {
+          if (isKickoff) {
+            _backToLogin();
+          } else {
+            queryUnfinishedMeeting();
+          }
+        }
         if (isBusy != null) {
           MeetingClient().busy = isBusy;
         }
@@ -79,8 +87,12 @@ class MeetingController extends GetxController with WindowListener {
 
   @override
   void onReady() {
-    MeetingClient().onClose = () {
-      queryUnfinishedMeeting();
+    MeetingClient().onClose = (kickoff) {
+      if (kickoff) {
+        _backToLogin();
+      } else {
+        queryUnfinishedMeeting();
+      }
     };
     super.onReady();
   }
@@ -89,6 +101,12 @@ class MeetingController extends GetxController with WindowListener {
   onClose() {
     super.onClose();
     windowsManager.setMethodHandler(null);
+  }
+
+  void _backToLogin() {
+    DataSp.removeLoginCertificate();
+    AppNavigator.startBackLogin();
+    IMViews.showToast('10010'.tr);
   }
 
   @override

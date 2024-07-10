@@ -24,7 +24,7 @@ class RepeatModelPage extends GetView<RepeatModelController> {
               const SizedBox(
                 height: 10,
               ),
-              _buildCustomItemView(),
+              // _buildCustomItemView(),
             ],
           ),
         ),

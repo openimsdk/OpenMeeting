@@ -11,4 +11,5 @@ abstract class MRoutes {
   static const customRepeat = '/custom-repeat';
   static const repeatEnds = '/repeat-ends';
   static const history = '/history';
+  static const historyDetail = '/history_detail';
 }

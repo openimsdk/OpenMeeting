@@ -20,7 +20,9 @@ class BookingConfigPage extends GetView<BookingConfigController> {
     return TouchCloseSoftKeyboard(
       child: Scaffold(
         backgroundColor: Colors.grey.shade200,
-        appBar: CupertinoNavigationBar(),
+        appBar: CupertinoNavigationBar(
+          middle: Text(StrRes.bookAMeeting),
+        ),
         body: Column(
           children: [
             Flexible(

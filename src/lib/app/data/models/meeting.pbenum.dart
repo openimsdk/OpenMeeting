@@ -38,5 +38,20 @@ class DayOfWeek extends $pb.ProtobufEnum {
   const DayOfWeek._($core.int v, $core.String n) : super(v, n);
 }
 
+class KickOffReason extends $pb.ProtobufEnum {
+  static const KickOffReason DuplicatedLogin = KickOffReason._(0, _omitEnumNames ? '' : 'DuplicatedLogin');
+  static const KickOffReason Offline = KickOffReason._(1, _omitEnumNames ? '' : 'Offline');
+
+  static const $core.List<KickOffReason> values = <KickOffReason> [
+    DuplicatedLogin,
+    Offline,
+  ];
+
+  static final $core.Map<$core.int, KickOffReason> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static KickOffReason? valueOf($core.int value) => _byValue[value];
+
+  const KickOffReason._($core.int v, $core.String n) : super(v, n);
+}
+
 
 const _omitEnumNames = $core.bool.fromEnvironment('protobuf.omit_enum_names');

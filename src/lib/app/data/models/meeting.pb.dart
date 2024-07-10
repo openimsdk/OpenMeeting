@@ -3146,6 +3146,7 @@ class SetMeetingHostInfoResp extends $pb.GeneratedMessage {
 enum NotifyMeetingData_MessageType {
   streamOperateData, 
   meetingHostData, 
+  kickOffMeetingData, 
   notSet
 }
 
@@ -3154,6 +3155,7 @@ class NotifyMeetingData extends $pb.GeneratedMessage {
     $core.String? operatorUserID,
     StreamOperateData? streamOperateData,
     MeetingHostData? meetingHostData,
+    KickOffMeetingData? kickOffMeetingData,
   }) {
     final $result = create();
     if (operatorUserID != null) {
@@ -3165,6 +3167,9 @@ class NotifyMeetingData extends $pb.GeneratedMessage {
     if (meetingHostData != null) {
       $result.meetingHostData = meetingHostData;
     }
+    if (kickOffMeetingData != null) {
+      $result.kickOffMeetingData = kickOffMeetingData;
+    }
     return $result;
   }
   NotifyMeetingData._() : super();
@@ -3174,13 +3179,15 @@ class NotifyMeetingData extends $pb.GeneratedMessage {
   static const $core.Map<$core.int, NotifyMeetingData_MessageType> _NotifyMeetingData_MessageTypeByTag = {
     2 : NotifyMeetingData_MessageType.streamOperateData,
     3 : NotifyMeetingData_MessageType.meetingHostData,
+    4 : NotifyMeetingData_MessageType.kickOffMeetingData,
     0 : NotifyMeetingData_MessageType.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'NotifyMeetingData', package: const $pb.PackageName(_omitMessageNames ? '' : 'openmeeting.meeting'), createEmptyInstance: create)
-    ..oo(0, [2, 3])
+    ..oo(0, [2, 3, 4])
     ..aOS(1, _omitFieldNames ? '' : 'operatorUserID', protoName: 'operatorUserID')
     ..aOM<StreamOperateData>(2, _omitFieldNames ? '' : 'streamOperateData', protoName: 'streamOperateData', subBuilder: StreamOperateData.create)
     ..aOM<MeetingHostData>(3, _omitFieldNames ? '' : 'meetingHostData', protoName: 'meetingHostData', subBuilder: MeetingHostData.create)
+    ..aOM<KickOffMeetingData>(4, _omitFieldNames ? '' : 'kickOffMeetingData', protoName: 'kickOffMeetingData', subBuilder: KickOffMeetingData.create)
     ..hasRequiredFields = false
   ;
 
@@ -3238,6 +3245,109 @@ class NotifyMeetingData extends $pb.GeneratedMessage {
   void clearMeetingHostData() => clearField(3);
   @$pb.TagNumber(3)
   MeetingHostData ensureMeetingHostData() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  KickOffMeetingData get kickOffMeetingData => $_getN(3);
+  @$pb.TagNumber(4)
+  set kickOffMeetingData(KickOffMeetingData v) { setField(4, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasKickOffMeetingData() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearKickOffMeetingData() => clearField(4);
+  @$pb.TagNumber(4)
+  KickOffMeetingData ensureKickOffMeetingData() => $_ensure(3);
+}
+
+class KickOffMeetingData extends $pb.GeneratedMessage {
+  factory KickOffMeetingData({
+    $core.String? userID,
+    $core.String? nickname,
+    KickOffReason? reasonCode,
+    $core.String? reason,
+  }) {
+    final $result = create();
+    if (userID != null) {
+      $result.userID = userID;
+    }
+    if (nickname != null) {
+      $result.nickname = nickname;
+    }
+    if (reasonCode != null) {
+      $result.reasonCode = reasonCode;
+    }
+    if (reason != null) {
+      $result.reason = reason;
+    }
+    return $result;
+  }
+  KickOffMeetingData._() : super();
+  factory KickOffMeetingData.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory KickOffMeetingData.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'KickOffMeetingData', package: const $pb.PackageName(_omitMessageNames ? '' : 'openmeeting.meeting'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'userID', protoName: 'userID')
+    ..aOS(2, _omitFieldNames ? '' : 'nickname')
+    ..e<KickOffReason>(3, _omitFieldNames ? '' : 'reasonCode', $pb.PbFieldType.OE, protoName: 'reasonCode', defaultOrMaker: KickOffReason.DuplicatedLogin, valueOf: KickOffReason.valueOf, enumValues: KickOffReason.values)
+    ..aOS(4, _omitFieldNames ? '' : 'reason')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  KickOffMeetingData clone() => KickOffMeetingData()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  KickOffMeetingData copyWith(void Function(KickOffMeetingData) updates) => super.copyWith((message) => updates(message as KickOffMeetingData)) as KickOffMeetingData;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static KickOffMeetingData create() => KickOffMeetingData._();
+  KickOffMeetingData createEmptyInstance() => create();
+  static $pb.PbList<KickOffMeetingData> createRepeated() => $pb.PbList<KickOffMeetingData>();
+  @$core.pragma('dart2js:noInline')
+  static KickOffMeetingData getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<KickOffMeetingData>(create);
+  static KickOffMeetingData? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get userID => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set userID($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUserID() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUserID() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get nickname => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set nickname($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasNickname() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearNickname() => clearField(2);
+
+  @$pb.TagNumber(3)
+  KickOffReason get reasonCode => $_getN(2);
+  @$pb.TagNumber(3)
+  set reasonCode(KickOffReason v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasReasonCode() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearReasonCode() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get reason => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set reason($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasReason() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearReason() => clearField(4);
 }
 
 class StreamOperateData extends $pb.GeneratedMessage {
@@ -3440,6 +3550,88 @@ class MeetingHostData extends $pb.GeneratedMessage {
   void clearHostType() => clearField(4);
 }
 
+class CleanPreviousMeetingsReq extends $pb.GeneratedMessage {
+  factory CleanPreviousMeetingsReq({
+    $core.String? userID,
+  }) {
+    final $result = create();
+    if (userID != null) {
+      $result.userID = userID;
+    }
+    return $result;
+  }
+  CleanPreviousMeetingsReq._() : super();
+  factory CleanPreviousMeetingsReq.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory CleanPreviousMeetingsReq.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CleanPreviousMeetingsReq', package: const $pb.PackageName(_omitMessageNames ? '' : 'openmeeting.meeting'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'userID', protoName: 'userID')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  CleanPreviousMeetingsReq clone() => CleanPreviousMeetingsReq()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  CleanPreviousMeetingsReq copyWith(void Function(CleanPreviousMeetingsReq) updates) => super.copyWith((message) => updates(message as CleanPreviousMeetingsReq)) as CleanPreviousMeetingsReq;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static CleanPreviousMeetingsReq create() => CleanPreviousMeetingsReq._();
+  CleanPreviousMeetingsReq createEmptyInstance() => create();
+  static $pb.PbList<CleanPreviousMeetingsReq> createRepeated() => $pb.PbList<CleanPreviousMeetingsReq>();
+  @$core.pragma('dart2js:noInline')
+  static CleanPreviousMeetingsReq getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CleanPreviousMeetingsReq>(create);
+  static CleanPreviousMeetingsReq? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get userID => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set userID($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasUserID() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearUserID() => clearField(1);
+}
+
+class CleanPreviousMeetingsResp extends $pb.GeneratedMessage {
+  factory CleanPreviousMeetingsResp() => create();
+  CleanPreviousMeetingsResp._() : super();
+  factory CleanPreviousMeetingsResp.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory CleanPreviousMeetingsResp.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CleanPreviousMeetingsResp', package: const $pb.PackageName(_omitMessageNames ? '' : 'openmeeting.meeting'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  CleanPreviousMeetingsResp clone() => CleanPreviousMeetingsResp()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  CleanPreviousMeetingsResp copyWith(void Function(CleanPreviousMeetingsResp) updates) => super.copyWith((message) => updates(message as CleanPreviousMeetingsResp)) as CleanPreviousMeetingsResp;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static CleanPreviousMeetingsResp create() => CleanPreviousMeetingsResp._();
+  CleanPreviousMeetingsResp createEmptyInstance() => create();
+  static $pb.PbList<CleanPreviousMeetingsResp> createRepeated() => $pb.PbList<CleanPreviousMeetingsResp>();
+  @$core.pragma('dart2js:noInline')
+  static CleanPreviousMeetingsResp getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CleanPreviousMeetingsResp>(create);
+  static CleanPreviousMeetingsResp? _defaultInstance;
+}
+
 class MeetingServiceApi {
   $pb.RpcClient _client;
   MeetingServiceApi(this._client);
@@ -3488,6 +3680,9 @@ class MeetingServiceApi {
   ;
   $async.Future<SetMeetingHostInfoResp> setMeetingHostInfo($pb.ClientContext? ctx, SetMeetingHostInfoReq request) =>
     _client.invoke<SetMeetingHostInfoResp>(ctx, 'MeetingService', 'SetMeetingHostInfo', request, SetMeetingHostInfoResp())
+  ;
+  $async.Future<CleanPreviousMeetingsResp> cleanPreviousMeetings($pb.ClientContext? ctx, CleanPreviousMeetingsReq request) =>
+    _client.invoke<CleanPreviousMeetingsResp>(ctx, 'MeetingService', 'CleanPreviousMeetings', request, CleanPreviousMeetingsResp())
   ;
 }
 

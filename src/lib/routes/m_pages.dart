@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:openmeeting/routes/app_pages.dart';
 
 import '../app/modules/meeting/book_meeting/booking_config/booking_config_binding.dart';
 import '../app/modules/meeting/book_meeting/booking_config/booking_config_page.dart';
@@ -12,6 +13,8 @@ import '../app/modules/meeting/book_meeting/selected_timezone/selected_timezone_
 import '../app/modules/meeting/book_meeting/selected_timezone/selected_timezone_page.dart';
 import '../app/modules/meeting/history/history_binding.dart';
 import '../app/modules/meeting/history/history_page.dart';
+import '../app/modules/meeting/history_detail/history_detail_binding.dart';
+import '../app/modules/meeting/history_detail/history_detail_page.dart';
 import '../app/modules/meeting/join_meeting/join_meeting_binding.dart';
 import '../app/modules/meeting/join_meeting/join_meeting_view.dart';
 import '../app/modules/meeting/meeting/meeting_binding.dart';
@@ -83,6 +86,11 @@ class MPages {
       name: MRoutes.history,
       page: () => const HistoryPage(),
       binding: HistoryBinding(),
+    ),
+    _pageBuilder(
+      name: MRoutes.historyDetail,
+      page: () => const HistoryDetailPage(),
+      binding: HistoryDetailBinding(),
     ),
   ];
 }

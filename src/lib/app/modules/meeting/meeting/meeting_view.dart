@@ -230,48 +230,52 @@ class MeetingPage extends GetView<MeetingController> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 200.w),
-                      child: meetingInfo.meetingName.toText
-                        ..style = Styles.ts_0C1C33_17sp_medium
-                        ..maxLines = 1
-                        ..overflow = TextOverflow.ellipsis,
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: Row(
+                      children: [
+                        ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: 200.w),
+                          child: meetingInfo.meetingName.toText
+                            ..style = Styles.ts_0C1C33_17sp_medium
+                            ..maxLines = 1
+                            ..overflow = TextOverflow.ellipsis,
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 8.w),
+                          decoration: BoxDecoration(
+                            color: controller.isStartedMeeting(meetingInfo)
+                                ? Styles.c_0089FF.withOpacity(0.1)
+                                : Colors.orangeAccent.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 1,
+                            horizontal: 5,
+                          ),
+                          child: controller.isStartedMeeting(meetingInfo)
+                              ? (StrRes.started.toText..style = Styles.ts_0089FF_12sp)
+                              : (StrRes.didNotStart.toText..style = TextStyle(fontSize: 12.sp, color: Colors.orange)),
+                        ),
+                      ],
                     ),
-                    Container(
-                      margin: EdgeInsets.only(left: 8.w),
-                      decoration: BoxDecoration(
-                        color: controller.isStartedMeeting(meetingInfo)
-                            ? Styles.c_0089FF.withOpacity(0.1)
-                            : Colors.orangeAccent.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 1,
-                        horizontal: 5,
-                      ),
-                      child: controller.isStartedMeeting(meetingInfo)
-                          ? (StrRes.started.toText..style = Styles.ts_0089FF_12sp)
-                          : (StrRes.didNotStart.toText..style = TextStyle(fontSize: 12.sp, color: Colors.orange)),
-                    ),
-                  ],
-                ),
-                6.verticalSpace,
-                controller.getMeetingDuration(meetingInfo).toText
-                  ..style = Styles.ts_8E9AB0_14sp
-                  ..maxLines = 1
-                  ..overflow = TextOverflow.ellipsis,
-                6.verticalSpace,
-                if (meetingInfo.creatorNickname.isNotEmpty)
-                  sprintf(StrRes.meetingOrganizerIs, [meetingInfo.creatorNickname]).toText
+                  ),
+                  6.verticalSpace,
+                  controller.getMeetingDuration(meetingInfo).toText
                     ..style = Styles.ts_8E9AB0_14sp
                     ..maxLines = 1
                     ..overflow = TextOverflow.ellipsis,
-              ],
+                  6.verticalSpace,
+                  if (meetingInfo.creatorNickname.isNotEmpty)
+                    sprintf(StrRes.meetingOrganizerIs, [meetingInfo.creatorNickname]).toText
+                      ..style = Styles.ts_8E9AB0_14sp
+                      ..maxLines = 1
+                      ..overflow = TextOverflow.ellipsis,
+                ],
+              ),
             ),
             SizedBox(
               width: 64.w,
