@@ -226,7 +226,7 @@ class MeetingPage extends GetView<MeetingController> {
       behavior: HitTestBehavior.translucent,
       child: Container(
         height: 98,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -260,16 +260,12 @@ class MeetingPage extends GetView<MeetingController> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 6,
-                ),
+                6.verticalSpace,
                 controller.getMeetingDuration(meetingInfo).toText
                   ..style = Styles.ts_8E9AB0_14sp
                   ..maxLines = 1
                   ..overflow = TextOverflow.ellipsis,
-                const SizedBox(
-                  height: 6,
-                ),
+                6.verticalSpace,
                 if (meetingInfo.creatorNickname.isNotEmpty)
                   sprintf(StrRes.meetingOrganizerIs, [meetingInfo.creatorNickname]).toText
                     ..style = Styles.ts_8E9AB0_14sp
@@ -278,8 +274,8 @@ class MeetingPage extends GetView<MeetingController> {
               ],
             ),
             SizedBox(
-              width: 64,
-              height: 32,
+              width: 64.w,
+              height: 32.h,
               child: CupertinoButton.filled(
                   padding: EdgeInsets.zero,
                   borderRadius: BorderRadius.circular(2),
