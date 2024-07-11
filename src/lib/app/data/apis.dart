@@ -308,7 +308,7 @@ class Apis {
       }
       IMViews.showToast(msg);
 
-      if (e.code == 10010) {
+      if (e.code == 10010 || e.code == 10002) {
         DataSp.removeLoginCertificate();
         AppNavigator.startBackLogin();
       }

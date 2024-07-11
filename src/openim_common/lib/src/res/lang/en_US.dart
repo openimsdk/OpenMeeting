@@ -620,7 +620,7 @@ const Map<String, String> en_US = {
 
   '10000': 'User not found',
   '10001': 'User has already registered',
-  '10002': 'Password error',
+  '10002': 'Incorrect account or password',
   '10003': 'Not found user account',
   '10004': 'Not found user token',
   '20001': 'One user joins more than one meeting',

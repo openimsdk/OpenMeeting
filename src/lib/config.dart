@@ -40,13 +40,13 @@ class Config {
 
   static const double textScaleFactor = 1.0;
 
-  static const _host = '150.109.93.151';
+  static const _host = '43.154.157.177';
 
   static const _ipRegex = '((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)';
 
   static bool get _isIP => RegExp(_ipRegex).hasMatch(_host);
 
   static String get _baseUrl {
-    return _isIP ? 'http://$_host:10002' : 'https://$_host/';
+    return _isIP ? 'http://$_host:11102' : 'https://$_host/';
   }
 }
