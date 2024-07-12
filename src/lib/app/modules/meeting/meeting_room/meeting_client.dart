@@ -41,6 +41,8 @@ class MeetingClient {
 
   String? roomID;
 
+  Room? _room;
+
   ValueChanged<bool>? onClose;
 
   void close({bool kickoff = false}) async {
@@ -65,6 +67,8 @@ class MeetingClient {
     if (PlatformExt.isMobile) {
       return;
     }
+
+    _room?.disconnect();
 
     Navigator.of(Get.context!).popUntil((route) => route.isFirst);
 
@@ -144,6 +148,7 @@ class MeetingClient {
       // The following line will enable the Android and iOS wakelock.
       if (!await WakelockPlus.enabled) WakelockPlus.enable();
 
+      _room = room;
       this.roomID = roomID;
 
       if (PlatformExt.isDesktop) {
@@ -175,7 +180,10 @@ class MeetingClient {
       if (error.toString().contains('NotExist')) {
         IMViews.showToast(StrRes.meetingIsOver);
       } else {
-        IMViews.showToast(StrRes.networkError);
+        Get.dialog(CustomDialog(
+          title: error.toString(),
+          content: trace.toString(),
+        ));
       }
       return null;
     }

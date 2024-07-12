@@ -110,7 +110,7 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
     Logger.print('participant: ${event.participant?.identity} metadata: $map');
 
     // kickofff
-    if (result.kickOffMeetingData.isKickOff) {
+    if (result.kickOffMeetingData.userID.isNotEmpty && result.kickOffMeetingData.isKickOff) {
       widget.room.disconnect();
       widget.onOperation?.call(context, OperationType.kickOff);
       return;
