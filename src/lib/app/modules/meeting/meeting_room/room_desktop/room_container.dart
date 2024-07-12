@@ -69,6 +69,7 @@ class _MeetingRoomContainerState extends State<MeetingRoomContainer> {
             widget.listener,
             roomID: widget.roomID,
             onOperation: _operateRoom,
+            onParticipantOperation: widget.onParticipantOperation,
             onSubjectInit: (meetingInfoChangedSubject, participantsSubject) {
               this.meetingInfoChangedSubject = meetingInfoChangedSubject;
               this.participantsSubject = participantsSubject;

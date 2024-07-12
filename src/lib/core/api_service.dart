@@ -93,7 +93,8 @@ class ApiService {
 
   Future post(String path, {Map<String, dynamic>? data, String? token}) async {
     try {
-      dio.options.headers['operationID'] = DateTime.now().millisecondsSinceEpoch.toString();
+      final operationID = DateTime.now().millisecondsSinceEpoch.toString();
+      dio.options.headers['operationID'] = operationID;
 
       final response = await dio.post(path, data: data);
 
@@ -103,7 +104,7 @@ class ApiService {
         if (result.errCode == 0) {
           return result.data;
         } else {
-          final exception = ApiException(code: result.errCode, message: result.errMsg);
+          final exception = ApiException(code: result.errCode, message: result.errMsg, operationID: operationID);
 
           return Future.error(exception);
         }
@@ -166,6 +167,7 @@ class ApiResponse {
 class ApiException implements Exception {
   final int code;
   final String? message;
+  final String? operationID;
 
-  ApiException({required this.code, this.message});
+  ApiException({required this.code, this.message, this.operationID});
 }

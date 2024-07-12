@@ -21,6 +21,7 @@ class Apis {
   static Future<UserInfo?> login({
     String? account,
     String? password,
+    bool forceBack = true,
   }) async {
     try {
       final data = await _showHud(
@@ -39,7 +40,7 @@ class Apis {
 
       return userInfo;
     } catch (e, s) {
-      _catchError(e, s);
+      _catchError(e, s, forceBack: forceBack);
 
       return Future.error(e);
     }
@@ -300,15 +301,21 @@ class Apis {
     }
   }
 
-  static void _catchError(Object e, StackTrace s) {
+  static void _catchError(Object e, StackTrace s, {bool forceBack = true}) {
     if (e is ApiException) {
       var msg = '${e.code}'.tr;
       if (msg.isEmpty) {
         msg = e.message ?? 'Unkonw error';
       }
-      IMViews.showToast(msg);
+      // IMViews.showToast(msg);
 
-      if (e.code == 10010 || e.code == 10002) {
+      Get.dialog(
+        CustomDialog(
+          title: msg,
+          content: 'operationID: ${e.operationID}',
+        ),
+      );
+      if ((e.code == 10010 || e.code == 10002) && forceBack) {
         DataSp.removeLoginCertificate();
         AppNavigator.startBackLogin();
       }

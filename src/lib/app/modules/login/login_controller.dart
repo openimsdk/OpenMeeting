@@ -60,25 +60,30 @@ class LoginController extends GetxController {
 
   login() {
     LoadingView.singleton.wrap(asyncFunction: () async {
-      var suc = await _login();
+      var suc = await _login(forceBack: false);
       if (suc) {
         AppNavigator.startMain();
       }
     });
   }
 
-  Future<bool> _login() async {
+  Future<bool> _login({bool forceBack = true}) async {
     try {
       final userInfo = await Apis.login(
         account: accountCtrl.text.trim(),
         password: pwdCtrl.text.trim(),
+        forceBack: forceBack,
       );
 
       if (userInfo == null) {
         return false;
       }
 
-      final account = {"account": accountCtrl.text.trim(), 'userInfo': userInfo.toJson(), 'password': pwdCtrl.text.trim()};
+      final account = {
+        "account": accountCtrl.text.trim(),
+        'userInfo': userInfo.toJson(),
+        'password': pwdCtrl.text.trim()
+      };
       await DataSp.putLoginAccount(account);
       Logger.print('login : ${userInfo.userId}, token: ${userInfo.token}');
 
