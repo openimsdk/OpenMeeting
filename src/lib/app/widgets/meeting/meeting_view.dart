@@ -184,6 +184,9 @@ abstract class MeetingViewState<T extends MeetingView> extends State<T> {
                           userID: MeetingClient().userInfo.userID, nickname: MeetingClient().userInfo.nickname),
                       onOperation: widget.onOperation,
                       onParticipantOperation: widget.onParticipantOperation,
+                      onTapLayoutView: (type) {
+                        onTapLayoutView(type);
+                      },
                       child: buildChild(),
                     ),
                 ],
@@ -226,4 +229,6 @@ abstract class MeetingViewState<T extends MeetingView> extends State<T> {
       );
 
   Widget buildChild();
+
+  void onTapLayoutView(MxNLayoutViewType type);
 }

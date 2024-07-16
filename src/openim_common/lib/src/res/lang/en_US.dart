@@ -535,9 +535,11 @@ const Map<String, String> en_US = {
   "gifNotSupported": "Gif images are not supported",
   "lookOver": "Look",
   "groupRequestHandled": "Has been processed",
-  "burnAfterReadingDescription": "Messages sent after this time will be automatically deleted after the selected time after being read by friends",
+  "burnAfterReadingDescription":
+      "Messages sent after this time will be automatically deleted after the selected time after being read by friends",
   "periodicallyDeleteMessage": "Periodically delete message",
-  "periodicallyDeleteMessageDescription": "Messages sent after this will be automatically deleted after the selected time",
+  "periodicallyDeleteMessageDescription":
+      "Messages sent after this will be automatically deleted after the selected time",
   "nDay": "%s days",
   "nWeek": "%s weeks",
   "nMonth": "%s months",
@@ -617,6 +619,13 @@ const Map<String, String> en_US = {
   'meetingIsLocked': 'The meeting is locked.',
   'today': 'Today',
   'meetingIsEnded': 'The meeting has ended.',
+  'oneXnViews': 'Primary and secondary',
+  'twoXtwoViews': 'Quarter grid',
+  'threeXthreeViews': 'Nine points',
+  'appointNewHost': 'Appoint a new host',
+  'appointNewHostHint': 'Are you sure you want to set it as host?',
+  'gridView': 'Grid View',
+  'gridViewHint': 'Use after opening the video, only effective for yourself',
 
   '10000': 'User not found',
   '10001': 'User has already registered',
@@ -628,5 +637,4 @@ const Map<String, String> en_US = {
   '20003': 'Meeting auth check permission error',
   '20004': 'Meeting update check error',
   '10010': 'The login status has expired and you need to log in again',
-
 };

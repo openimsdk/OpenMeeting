@@ -1183,4 +1183,11 @@ class StrRes {
   static String get meetingIsLocked => 'meetingIsLocked'.tr;
   static String get today => 'today'.tr;
   static String get meetingIsEnded => 'meetingIsEnded'.tr;
+  static String get oneXnViews => 'oneXnViews'.tr;
+  static String get twoXtwoViews => 'twoXtwoViews'.tr;
+  static String get threeXthreeViews => 'threeXthreeViews'.tr;
+  static String get appointNewHost => 'appointNewHost'.tr;
+  static String get appointNewHostHint => 'appointNewHostHint'.tr;
+  static String get gridView => 'gridView'.tr;
+  static String get gridViewHint => 'gridViewHint'.tr;
 }

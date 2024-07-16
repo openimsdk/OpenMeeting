@@ -362,3 +362,20 @@ extension HostTypeExt on HostType {
     }
   }
 }
+
+enum MxNLayoutViewType { oneXn, twoXtwo, threeXthree }
+
+extension MxNLayoutViewTypeExt on MxNLayoutViewType {
+  int get rawValue {
+    switch (this) {
+      case MxNLayoutViewType.oneXn:
+        return 1;
+      case MxNLayoutViewType.twoXtwo:
+        return 2;
+      case MxNLayoutViewType.threeXthree:
+        return 3;
+      default:
+        return 1;
+    }
+  }
+}

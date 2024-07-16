@@ -41,6 +41,7 @@ class ControlsView extends StatefulWidget {
     // this.onClose,
     this.onMinimize,
     this.onInviteMembers,
+    this.onTapLayoutView,
     this.startTimerCompleter,
     this.enableFullScreen = false,
     this.options,
@@ -55,6 +56,7 @@ class ControlsView extends StatefulWidget {
   // final ValueChanged<BuildContext?>? onClose;
   final Function()? onMinimize;
   final Function()? onInviteMembers;
+  final ValueChanged<MxNLayoutViewType>? onTapLayoutView;
   final Completer<bool>? startTimerCompleter;
   final bool enableFullScreen;
   final MeetingOptions? options;
@@ -92,9 +94,11 @@ class _ControlsViewState extends State<ControlsView> {
 
   MeetingSetting? get setting => _meetingInfo?.setting;
 
-  bool get _disabledMicrophone => !_participant.isMicrophoneEnabled() && setting?.canParticipantsUnmuteMicrophone == false && !_isHost;
+  bool get _disabledMicrophone =>
+      !_participant.isMicrophoneEnabled() && setting?.canParticipantsUnmuteMicrophone == false && !_isHost;
 
-  bool get _disabledCamera => !_participant.isCameraEnabled() && setting?.canParticipantsEnableCamera == false && !_isHost;
+  bool get _disabledCamera =>
+      !_participant.isCameraEnabled() && setting?.canParticipantsEnableCamera == false && !_isHost;
 
   bool get _disabledScreenShare => setting?.canParticipantsShareScreen == false && !_isHost;
 
@@ -269,7 +273,8 @@ class _ControlsViewState extends State<ControlsView> {
     }
     if (lkPlatformIs(PlatformType.iOS)) {
       var track = await LocalVideoTrack.createScreenShareTrack(
-        const ScreenShareCaptureOptions(useiOSBroadcastExtension: true, maxFrameRate: 15.0, params: VideoParametersPresets.screenShareH720FPS15),
+        const ScreenShareCaptureOptions(
+            useiOSBroadcastExtension: true, maxFrameRate: 15.0, params: VideoParametersPresets.screenShareH720FPS15),
       );
       await _participant.publishVideoTrack(track);
 
@@ -313,6 +318,9 @@ class _ControlsViewState extends State<ControlsView> {
                       title: _meetingInfo?.meetingName ?? '',
                       time: IMUtils.seconds2HMS(_duration),
                       onViewMeetingDetail: (ctx) => _viewMeetingDetail(ctx: ctx),
+                      onTapLayoutView: (type) {
+                        widget.onTapLayoutView?.call(type);
+                      },
                     )
                   : MeetingRoomMobileAppBar(
                       title: _meetingInfo?.meetingName,
@@ -435,11 +443,13 @@ class _ControlsViewState extends State<ControlsView> {
                       participants: temp,
                       onSelected: (value) async {
                         await controller?.reverse();
-                        if (!mounted) {
+                        if (!mounted || value == null) {
                           return;
                         }
-                        MeetingAlertDialog.show(forMobile: true, context, 'Are you sure?', onConfirm: () async {
-                          await widget.onParticipantOperation?.call(type: OperationParticipantType.setHost, userID: value);
+                        MeetingAlertDialog.show(forMobile: true, context, StrRes.appointNewHostHint,
+                            onConfirm: () async {
+                          await widget.onParticipantOperation
+                              ?.call(type: OperationParticipantType.setHost, userID: value);
                           if (mounted) {
                             widget.onOperation?.call(context, OperationType.leave);
                           }
@@ -469,7 +479,10 @@ class _ControlsViewState extends State<ControlsView> {
             SelectMemberViewForDesktop(
                 participants: temp,
                 onSelected: (value) {
-                  MeetingAlertDialog.show(context, 'Are you sure?', onConfirm: () async {
+                  if (value == null) {
+                    return;
+                  }
+                  MeetingAlertDialog.show(context, StrRes.appointNewHostHint, onConfirm: () async {
                     await widget.onParticipantOperation?.call(type: OperationParticipantType.setHost, userID: value);
                     if (mounted) {
                       widget.onOperation?.call(context, OperationType.leave);

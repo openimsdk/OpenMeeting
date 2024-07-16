@@ -11,7 +11,7 @@ abstract class SelectMemberView extends StatefulWidget {
   const SelectMemberView({super.key, required this.participants, required this.onSelected});
 
   final List<ParticipantTrack> participants;
-  final ValueChanged<String> onSelected;
+  final ValueChanged<String?> onSelected;
 }
 
 abstract class SelectMemberViewState<T extends SelectMemberView> extends State<T> {
@@ -39,7 +39,7 @@ abstract class SelectMemberViewState<T extends SelectMemberView> extends State<T
   Widget buildBody(BuildContext context);
 
   Widget buildList(BuildContext context, {double height = 30}) {
-    return ListView.builder(
+    return ListView.separated(
       shrinkWrap: true,
       itemCount: widget.participants.length,
       itemBuilder: (context, index) {
@@ -51,17 +51,39 @@ abstract class SelectMemberViewState<T extends SelectMemberView> extends State<T
 
         return ListTile(
           dense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
           leading: AvatarView(
             text: nickname,
             height: height,
           ),
-          title: nickname.toText..style = Styles.ts_0C1C33_12sp,
+          title: nickname.toText..style = Styles.ts_0C1C33_17sp,
           trailing: selectedUserID == userID ? Icon(Icons.check, color: Styles.c_0089FF) : null,
           onTap: () {
             selectedUserID = userID;
           },
         );
       },
+      separatorBuilder: (BuildContext context, int index) {
+        return const Divider(
+          height: 8,
+          indent: 52,
+        );
+      },
+    );
+  }
+
+  Widget buildExitButton({double? width, double height = 30}) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: CupertinoButton.filled(
+          padding: const EdgeInsets.symmetric(vertical: 0),
+          child: Text(
+            StrRes.assignAndLeave,
+          ),
+          onPressed: () {
+            widget.onSelected(selectedUserID);
+          }),
     );
   }
 }
@@ -87,23 +109,37 @@ class SelectMemberViewForMobileState extends SelectMemberViewState<SelectMemberV
             bottomRight: Radius.zero),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          TextButton(
-            onPressed: _selectedUserID == null
-                ? null
-                : () {
-                    widget.onSelected(selectedUserID!);
-                  },
-            child: Text(
-              StrRes.determine,
-              style: Styles.ts_0C1C33_14sp,
-            ),
-          ),
-          const Divider(
-            height: 1,
+          Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  widget.onSelected(null);
+                },
+                icon: const Icon(Icons.keyboard_arrow_left),
+              ),
+              const Spacer(),
+              Text(
+                StrRes.appointNewHost,
+                style: Styles.ts_0C1C33_17sp_medium,
+              ),
+              const Spacer(),
+              const SizedBox(
+                width: 20,
+              )
+            ],
           ),
           buildList(context, height: 42),
+          const SizedBox(
+            height: 16,
+          ),
+          LayoutBuilder(builder: (ctx, constraints) {
+            return buildExitButton(width: constraints.maxWidth - 16, height: 40);
+          }),
+          const SizedBox(
+            height: 16,
+          ),
         ],
       ),
     );
@@ -134,17 +170,7 @@ class SelectMemberViewForDesktopState extends SelectMemberViewState<SelectMember
           const SizedBox(
             height: 16,
           ),
-          SizedBox(
-            height: 30,
-            child: CupertinoButton.filled(
-                padding: const EdgeInsets.symmetric(vertical: 0),
-                child: Text(
-                  StrRes.assignAndLeave,
-                ),
-                onPressed: () {
-                  widget.onSelected(selectedUserID!);
-                }),
-          ),
+          buildExitButton(),
         ],
       ),
     );

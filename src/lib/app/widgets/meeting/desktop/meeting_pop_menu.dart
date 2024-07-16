@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:openmeeting/app/data/models/meeting.pb.dart';
@@ -216,7 +215,11 @@ class MeetingPopMenu {
   }
 
   static void showSimple(BuildContext context,
-      {double contentDyOffset = 0, required String title1, required VoidCallback onTap1, String? title2, VoidCallback? onTap2}) {
+      {double contentDyOffset = 0,
+      required String title1,
+      required VoidCallback onTap1,
+      String? title2,
+      VoidCallback? onTap2}) {
     // internal
     Widget buildContent() {
       return ListView(
@@ -255,7 +258,9 @@ class MeetingPopMenu {
   }
 
   static void showRoomSetting(BuildContext context,
-      {required MeetingSetting setting, Future<bool?> Function(RoomSetting setting, bool to)? onOperation, VoidCallback? onPop}) {
+      {required MeetingSetting setting,
+      Future<bool?> Function(RoomSetting setting, bool to)? onOperation,
+      VoidCallback? onPop}) {
     // internal
     Widget buildContent() {
       return RoomSettingPanel(
@@ -275,7 +280,8 @@ class MeetingPopMenu {
     );
   }
 
-  static void showEnableCameraSetting(BuildContext context, {bool enableCamera = false, ValueChanged<bool>? onOperation, VoidCallback? onPop}) {
+  static void showEnableCameraSetting(BuildContext context,
+      {bool enableCamera = false, ValueChanged<bool>? onOperation, VoidCallback? onPop}) {
     bool selected = enableCamera;
     // internal
     Widget buildContent() {
@@ -319,7 +325,10 @@ class MeetingPopMenu {
   }
 
   static void showSimpleWidget(BuildContext context, Widget widget,
-      {PopoverDirection direction = PopoverDirection.bottom, double arrowDxOffset = 0, double width = 0, double arrowHeight = 0}) {
+      {PopoverDirection direction = PopoverDirection.bottom,
+      double arrowDxOffset = 0,
+      double? width,
+      double arrowHeight = 0}) {
     showPopover(
         context: context,
         bodyBuilder: (context) => widget,
@@ -415,5 +424,75 @@ class MeetingPopMenu {
     }
 
     showSimpleWidget(context, buildContent(), width: 200);
+  }
+
+  static void showSelectGridTypeView(BuildContext context, ValueChanged<MxNLayoutViewType> onTap) {
+    Widget buildItem(String title, String imageRes, VoidCallback onTap) {
+      return GestureDetector(
+        onTap: () {
+          Navigator.of(context).pop();
+          onTap();
+        },
+        child: Container(
+          width: 160,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey.shade100,
+              width: 1,
+            ),
+            borderRadius: BorderRadius.circular(3),
+          ),
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            children: [
+              imageRes.toImage,
+              const SizedBox(
+                height: 4,
+              ),
+              Text(
+                title,
+                style: Styles.ts_0C1C33_10sp,
+              )
+            ],
+          ),
+        ),
+      );
+    }
+
+    Widget buildContent(ValueChanged<MxNLayoutViewType> onTap) {
+      final items = [
+        {'title': StrRes.oneXnViews, 'image': ImageRes.layoutViews1xnIcon, 'type': MxNLayoutViewType.oneXn},
+        {'title': StrRes.twoXtwoViews, 'image': ImageRes.layoutViews2x2Icon, 'type': MxNLayoutViewType.twoXtwo},
+        {'title': StrRes.threeXthreeViews, 'image': ImageRes.layoutViews3x3Icon, 'type': MxNLayoutViewType.threeXthree},
+      ];
+
+      return Container(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                StrRes.gridViewHint,
+                style: Styles.ts_8E9AB0_10sp,
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                  spacing: 8,
+                  children: items.map((item) {
+                    final title = item['title'] as String;
+                    final imageRes = item['image'] as String;
+                    final type = item['type'] as MxNLayoutViewType;
+
+                    return buildItem(title, imageRes, () {
+                      onTap(type);
+                    });
+                  }).toList()),
+            ],
+          ));
+    }
+
+    showSimpleWidget(context, buildContent(onTap));
   }
 }

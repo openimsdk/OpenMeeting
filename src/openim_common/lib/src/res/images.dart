@@ -200,4 +200,9 @@ class ImageRes {
   static const meetingListEmpty = '$_dir/ic_meeting_list_empty.webp';
   static const meetingLoginLogo = '$_dir/ic_meeting_login_logo.webp';
   static const meetingHistoryDetailIcon = '$_dir/ic_history_detail_icon.webp';
+  static const layoutViewsIcon = '$_dir/ic_layout_views_icon.webp';
+  static const layoutViewsDownArrowIcon = '$_dir/ic_layout_views_down_arrow_icon.webp';
+  static const layoutViews1xnIcon = '$_dir/ic_layout_views_1xn_icon.webp';
+  static const layoutViews2x2Icon = '$_dir/ic_layout_views_2x2_icon.webp';
+  static const layoutViews3x3Icon = '$_dir/ic_layout_views_3x3_icon.webp';
 }

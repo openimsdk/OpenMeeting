@@ -76,8 +76,10 @@ class MeetingClient {
       await windowsManager.closeAllSubWindows();
     } else {
       final controller = WindowController.fromWindowId(kWindowId!);
-
       await controller.hide();
+      final frame = const Offset(0, 0) & const Size(1280, 720);
+      await WindowController.fromWindowId(kWindowId!).setFrame(frame);
+      WindowController.fromWindowId(kWindowId!).center();
       await windowsManager.call(WindowType.room, WindowEvent.hide, {"id": kWindowId!});
     }
 

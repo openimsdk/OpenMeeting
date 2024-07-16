@@ -80,8 +80,18 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
     ..on<RoomRecordingStatusChanged>((event) {})
     ..on<LocalTrackPublishedEvent>((_) => _sortParticipants())
     ..on<LocalTrackUnpublishedEvent>((_) => _sortParticipants())
-    ..on<ParticipantConnectedEvent>((_) => _sortParticipants())
-    ..on<ParticipantDisconnectedEvent>((_) => _sortParticipants())
+    ..on<ParticipantConnectedEvent>((event) {
+      print('ParticipantConnectedEvent: ${event.participant.identity}, name => ${event.participant.name}');
+      _sortParticipants();
+    })
+    ..on<ParticipantDisconnectedEvent>((event) {
+      print('ParticipantConnectedEvent: ${event.participant.identity}, name => ${event.participant.name}');
+      _sortParticipants();
+    })
+    ..on<ParticipantNameUpdatedEvent>((event) {
+      print('Participant name updated: ${event.participant.identity}, name => ${event.name}');
+      _sortParticipants();
+    })
     ..on<RoomMetadataChangedEvent>((event) => _parseRoomMetadata())
     ..on<DataReceivedEvent>((event) => _parseDataReceived(event));
 
@@ -106,7 +116,7 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
   void _parseDataReceived(DataReceivedEvent event) {
     final jsonStr = utf8.decode(event.data);
     final map = jsonDecode(jsonStr);
-    final result = NotifyMeetingData()..mergeFromProto3Json(map);
+    final result = NotifyMeetingData.create()..mergeFromProto3Json(map);
     Logger.print('participant: ${event.participant?.identity} metadata: $map');
 
     // kickofff
@@ -128,27 +138,38 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
 
     if (operateUser == null) return;
 
-    final cameraOnEntry = operateUser.cameraOnEntry;
-    final microphoneOnEntry = operateUser.microphoneOnEntry;
+    final operations = List<Map<String, dynamic>>.from(map['streamOperateData']['operation']);
 
-    if (cameraOnEntry) {
-      MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingEnableVideo]),
-          forMobile: true, confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
+    final operateUserMap = operations.firstWhereOrNull((element) {
+      return element['userID'] == widget.room.localParticipant?.identity;
+    });
+
+    if (operateUserMap == null) return;
+
+    final cameraOnEntry = operateUserMap['cameraOnEntry'] as bool?;
+    final microphoneOnEntry = operateUserMap['microphoneOnEntry'] as bool?;
+
+    if (cameraOnEntry != null) {
+      if (cameraOnEntry) {
+        MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingEnableVideo]),
+            forMobile: true, confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
+          widget.room.localParticipant?.setCameraEnabled(cameraOnEntry);
+        });
+      } else {
         widget.room.localParticipant?.setCameraEnabled(cameraOnEntry);
-      });
-    } else {
-      widget.room.localParticipant?.setCameraEnabled(cameraOnEntry);
+      }
     }
 
-    if (microphoneOnEntry) {
-      MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingUnmute]),
-          forMobile: true, confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
+    if (microphoneOnEntry != null) {
+      if (microphoneOnEntry) {
+        MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingUnmute]),
+            forMobile: true, confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
+          widget.room.localParticipant?.setMicrophoneEnabled(microphoneOnEntry);
+        });
+      } else {
         widget.room.localParticipant?.setMicrophoneEnabled(microphoneOnEntry);
-      });
-    } else {
-      widget.room.localParticipant?.setMicrophoneEnabled(microphoneOnEntry);
+      }
     }
-
     Logger.print(jsonStr);
   }
 
@@ -368,6 +389,9 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
           title: StrRes.meetingClosedHint,
         ),
       );
+
+  @override
+  void onTapLayoutView(MxNLayoutViewType type) {}
 }
 
 class FirstPageZoomNotification extends Notification {

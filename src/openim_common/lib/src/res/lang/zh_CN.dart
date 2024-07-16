@@ -617,7 +617,14 @@ const Map<String, String> zh_CN = {
   'meetingIsLocked': '会议已被锁定',
   'today': '今天',
   'meetingIsEnded': '会议已结束',
-
+  'oneXnViews': '主次视图',
+  'twoXtwoViews': '四分格视图',
+  'threeXthreeViews': '九分格视图',
+  'appointNewHost': '指定一名新的主持人',
+  'appointNewHostHint': '确定将其设置为主持人吗？',
+  'gridView': '网格视图',
+  'gridViewHint': '开启视频后使用，仅对自己生效',
+  
   '10001': '账号已注册',
   '10002': '账号或者密码错误',
   '10003': '未发现账号',

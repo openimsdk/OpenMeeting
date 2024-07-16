@@ -8,20 +8,23 @@ import 'package:openmeeting/app/data/models/meeting.pb.dart';
 import 'package:openmeeting/app/data/models/pb_extension.dart';
 import 'package:sprintf/sprintf.dart';
 import '../../../../data/models/define.dart';
-import '../../../../widgets/meeting/desktop/m_x_n_layout_view.dart';
+import '../../../../widgets/meeting/desktop/default_layout_view.dart';
 import '../../../../widgets/meeting/desktop/meeting_alert_dialog.dart';
-import '../../../../widgets/meeting/desktop/one_x_n_layout_view.dart';
+import '../../../../widgets/meeting/desktop/m_x_n_layout_view.dart';
 import '../../../../widgets/meeting/meeting_view.dart';
 import '../../../../widgets/meeting/participant_info.dart';
 
 class MeetingDesktopRoom extends MeetingView {
-  const MeetingDesktopRoom(super.room, super.listener,
-      {super.key,
-      required super.roomID,
-      super.onParticipantOperation,
-      super.options,
-      super.onOperation,
-      super.onSubjectInit});
+  const MeetingDesktopRoom(
+    super.room,
+    super.listener, {
+    super.key,
+    required super.roomID,
+    super.onParticipantOperation,
+    super.options,
+    super.onOperation,
+    super.onSubjectInit,
+  });
 
   @override
   MeetingViewState<MeetingDesktopRoom> createState() => _MeetingRoomState();
@@ -36,6 +39,8 @@ class _MeetingRoomState extends MeetingViewState<MeetingDesktopRoom> {
   final _pageController = PageController();
   int _pages = 0;
   ParticipantTrack? focusParticipantTrack;
+
+  MxNLayoutViewType _layoutViewType = MxNLayoutViewType.oneXn;
 
   @override
   void initState() {
@@ -102,7 +107,7 @@ class _MeetingRoomState extends MeetingViewState<MeetingDesktopRoom> {
   void _parseDataReceived(DataReceivedEvent event) {
     final jsonStr = utf8.decode(event.data);
     final map = jsonDecode(jsonStr);
-    final result = NotifyMeetingData()..mergeFromProto3Json(map);
+    final result = NotifyMeetingData.create()..mergeFromProto3Json(map);
     Logger.print('participant: ${event.participant?.identity} metadata: $map');
 
     // kickofff
@@ -124,27 +129,38 @@ class _MeetingRoomState extends MeetingViewState<MeetingDesktopRoom> {
 
     if (operateUser == null) return;
 
-    final cameraOnEntry = operateUser.cameraOnEntry;
-    final microphoneOnEntry = operateUser.microphoneOnEntry;
+    final operations = List<Map<String, dynamic>>.from(map['streamOperateData']['operation']);
 
-    if (cameraOnEntry) {
-      MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingEnableVideo]),
-          forMobile: true, confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
+    final operateUserMap = operations.firstWhereOrNull((element) {
+      return element['userID'] == widget.room.localParticipant?.identity;
+    });
+
+    if (operateUserMap == null) return;
+
+    final cameraOnEntry = operateUserMap['cameraOnEntry'] as bool?;
+    final microphoneOnEntry = operateUserMap['microphoneOnEntry'] as bool?;
+
+    if (cameraOnEntry != null) {
+      if (cameraOnEntry) {
+        MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingEnableVideo]),
+            forMobile: true, confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
+          widget.room.localParticipant?.setCameraEnabled(cameraOnEntry);
+        });
+      } else {
         widget.room.localParticipant?.setCameraEnabled(cameraOnEntry);
-      });
-    } else {
-      widget.room.localParticipant?.setCameraEnabled(cameraOnEntry);
+      }
     }
 
-    if (microphoneOnEntry) {
-      MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingUnmute]),
-          forMobile: true, confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
+    if (microphoneOnEntry != null) {
+      if (microphoneOnEntry) {
+        MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingUnmute]),
+            forMobile: true, confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
+          widget.room.localParticipant?.setMicrophoneEnabled(microphoneOnEntry);
+        });
+      } else {
         widget.room.localParticipant?.setMicrophoneEnabled(microphoneOnEntry);
-      });
-    } else {
-      widget.room.localParticipant?.setMicrophoneEnabled(microphoneOnEntry);
+      }
     }
-
     Logger.print(jsonStr);
   }
 
@@ -302,17 +318,18 @@ class _MeetingRoomState extends MeetingViewState<MeetingDesktopRoom> {
       color: Colors.white,
       child: Stack(children: [
         anyOneHasVideo
-            ? OxNLayoutView(
+            ? MxNLayoutView(
                 focusParticipantTrack: _firstParticipantTrack,
                 participantTracks: participantTracks,
                 options: widget.options,
+                layoutViewType: _layoutViewType,
                 onDoubleTap: (track) {
                   setState(() {
                     wasClickedUserID = track.participant.identity;
                   });
                 },
               )
-            : MxNLayoutView(
+            : DefaultLayoutView(
                 participantTracks: participantTracks,
                 options: widget.options,
               ),
@@ -352,6 +369,13 @@ class _MeetingRoomState extends MeetingViewState<MeetingDesktopRoom> {
         context, event.reason == DisconnectReason.disconnected ? StrRes.meetingIsOver : StrRes.meetingClosedHint,
         confirmText: event.reason == DisconnectReason.disconnected ? StrRes.iKnew : null, onConfirm: () {
       widget.onOperation?.call(context, OperationType.onlyClose);
+    });
+  }
+
+  @override
+  void onTapLayoutView(MxNLayoutViewType type) {
+    setState(() {
+      _layoutViewType = type;
     });
   }
 }

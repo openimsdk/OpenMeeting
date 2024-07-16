@@ -255,7 +255,7 @@ class _ParticipantsDesktopViewState extends ParticipantsViewState<ParticipantsDe
               ..style = Styles.ts_0C1C33_17sp
               ..maxLines = 1
               ..overflow = TextOverflow.ellipsis,
-            if (userID == _meetingInfo?.hostUserID)
+            if (widget.loginUserID == _meetingInfo?.hostUserID && userID != widget.loginUserID)
               Text(
                 '(${StrRes.meetingHost}, ${StrRes.me})',
                 style: Styles.ts_8E9AB0_12sp,
