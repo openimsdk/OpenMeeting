@@ -39,7 +39,7 @@ class MeetingDetailPage extends GetView<MeetingDetailController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  (controller.meetingInfo.meetingName).toText..style = Styles.ts_0C1C33_17sp_medium,
+                  (controller.meetingInfo.value.meetingName).toText..style = Styles.ts_0C1C33_17sp_medium,
                   14.verticalSpace,
                   Row(
                     children: [
@@ -149,13 +149,13 @@ class MeetingDetailPage extends GetView<MeetingDetailController> {
   void showCheckPasswordDialog() async {
     final info = controller.meetingInfo;
 
-    if (info.creatorUserID == controller.userInfo.userId) {
+    if (info.value.creatorUserID == controller.userInfo.userId) {
       controller.enterMeeting(null);
 
       return;
     }
 
-    final meeting = await controller.getMeetingPassword(info.meetingID, info.creatorUserID);
+    final meeting = await controller.getMeetingPassword(info.value.meetingID, info.value.creatorUserID);
 
     if (meeting.lockMeeting) {
       IMViews.showToast(StrRes.meetingIsLocked);
@@ -168,7 +168,7 @@ class MeetingDetailPage extends GetView<MeetingDetailController> {
 
       return;
     }
-    MeetingAlertDialog.showEnterMeetingWithPasswordDialog(Get.context!, info.creatorNickname,
+    MeetingAlertDialog.showEnterMeetingWithPasswordDialog(Get.context!, info.value.creatorNickname,
         onConfirm: (password) async {
       final result = meeting.password == password;
 

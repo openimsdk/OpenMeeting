@@ -7,6 +7,10 @@ enum CreateMeetingType {
 }
 
 abstract class IMeetingRepository {
+  Future<bool> logout() {
+    throw UnimplementedError();
+  }
+
   Future<List<MeetingInfoSetting>> getUnfinished(String userID) {
     throw UnimplementedError();
   }

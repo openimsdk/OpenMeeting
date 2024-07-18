@@ -7,6 +7,13 @@ import 'repository_adapter.dart';
 
 class MeetingRepository implements IMeetingRepository {
   @override
+  Future<bool> logout() async {
+    await Apis.logout();
+
+    return true;
+  }
+
+  @override
   Future<List<MeetingInfoSetting>> getUnfinished(String userID) async {
     final params = {
       'userID': userID,

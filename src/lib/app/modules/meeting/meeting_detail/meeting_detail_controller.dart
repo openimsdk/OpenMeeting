@@ -15,7 +15,7 @@ import '../meeting_room/meeting_client.dart';
 class MeetingDetailController extends GetxController {
   final userInfo = Get.find<AppController>().userInfo!;
 
-  late MeetingInfoSetting meetingInfo;
+  final meetingInfo = Rx(MeetingInfoSetting());
   late String meetingCreator;
   late int startTime;
   late int endTime;
@@ -26,10 +26,16 @@ class MeetingDetailController extends GetxController {
 
   @override
   void onInit() {
-    meetingInfo = Get.arguments['meetingInfo'] as MeetingInfoSetting;
-    meetingCreator = meetingInfo.creatorNickname;
-    startTime = meetingInfo.scheduledTime;
-    endTime = meetingInfo.endTime;
+    meetingInfo.value = Get.arguments['meetingInfo'] as MeetingInfoSetting;
+    meetingCreator = meetingInfo.value.creatorNickname;
+    startTime = meetingInfo.value.scheduledTime;
+    endTime = meetingInfo.value.endTime;
+
+    repository.getMeetingInfo(meetingInfo.value.meetingID, meetingInfo.value.creatorUserID).then((value) {
+      if (value != null) {
+        meetingInfo.value = value;
+      }
+    });
     super.onInit();
   }
 
@@ -41,23 +47,23 @@ class MeetingDetailController extends GetxController {
 
   String get meetingEndDate => DateUtil.formatDateMs(endTime, format: IMUtils.getTimeFormat1());
 
-  String get meetingNo => meetingInfo.meetingID;
+  String get meetingNo => meetingInfo.value.meetingID;
 
-  bool get isMine => meetingInfo.creatorUserID == userInfo.userId;
+  bool get isMine => meetingInfo.value.creatorUserID == userInfo.userId;
 
   String get meetingDuration {
-    final offset = meetingInfo.duration;
+    final offset = meetingInfo.value.duration;
     return '${offset ~/ (60 * 1000)}${StrRes.minute}';
   }
 
   bool isStartedMeeting() {
-    final start = DateUtil.getDateTimeByMs(meetingInfo.scheduledTime);
+    final start = DateUtil.getDateTimeByMs(meetingInfo.value.scheduledTime);
     final now = DateTime.now();
     return start.difference(now).isNegative;
   }
 
   void copy() {
-    IMUtils.copy(text: meetingInfo.meetingID);
+    IMUtils.copy(text: meetingInfo.value.meetingID);
   }
 
   Future<({String? password, bool lockMeeting})> getMeetingPassword(String meetingID, String userID) async {
@@ -77,7 +83,7 @@ class MeetingDetailController extends GetxController {
     final isEnableVideo = DataSp.getMeetingEnableVideo();
     final videoIsMirroring = DataSp.getMeetingEnableVideoMirroring();
 
-    final cert = await repository.joinMeeting(meetingInfo.meetingID, userInfo.userId, password: password);
+    final cert = await repository.joinMeeting(meetingInfo.value.meetingID, userInfo.userId, password: password);
 
     if (cert == null) {
       return;
@@ -85,12 +91,12 @@ class MeetingDetailController extends GetxController {
 
     if (PlatformExt.isDesktop) {
       windowsManager.newRoom(
-          UserInfo(userID: userInfo.userId, nickname: userInfo.nickname), cert, meetingInfo.meetingID);
+          UserInfo(userID: userInfo.userId, nickname: userInfo.nickname), cert, meetingInfo.value.meetingID);
     } else {
       await MeetingClient().connect(Get.context!,
           url: cert.url,
           token: cert.token,
-          roomID: meetingInfo.meetingID,
+          roomID: meetingInfo.value.meetingID,
           options: MeetingOptions(
             enableMicrophone: isEnableMicrophone,
             enableSpeaker: isEnableSpeaker,
@@ -119,7 +125,7 @@ class MeetingDetailController extends GetxController {
 
   _cancelMeeting() {
     MeetingAlertDialog.show(Get.context!, StrRes.cancelMeetingConfirmHit, onConfirm: () async {
-      final result = await repository.endMeeting(meetingInfo.meetingID, userInfo.userId);
+      final result = await repository.endMeeting(meetingInfo.value.meetingID, userInfo.userId);
 
       if (result) {
         IMViews.showToast(StrRes.changedSuccessfully);
@@ -129,7 +135,7 @@ class MeetingDetailController extends GetxController {
   }
 
   _modifyMeetingInfo() => MNavigator.startBookMeeting(
-        meetingInfo: meetingInfo,
+        meetingInfo: meetingInfo.value,
         offAndToNamed: true,
       );
 }

@@ -41,10 +41,12 @@ class DayOfWeek extends $pb.ProtobufEnum {
 class KickOffReason extends $pb.ProtobufEnum {
   static const KickOffReason DuplicatedLogin = KickOffReason._(0, _omitEnumNames ? '' : 'DuplicatedLogin');
   static const KickOffReason Offline = KickOffReason._(1, _omitEnumNames ? '' : 'Offline');
+  static const KickOffReason Logout = KickOffReason._(2, _omitEnumNames ? '' : 'Logout');
 
   static const $core.List<KickOffReason> values = <KickOffReason> [
     DuplicatedLogin,
     Offline,
+    Logout,
   ];
 
   static final $core.Map<$core.int, KickOffReason> _byValue = $pb.ProtobufEnum.initByValue(values);

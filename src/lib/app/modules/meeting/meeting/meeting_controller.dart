@@ -301,6 +301,15 @@ class MeetingController extends GetxController with WindowListener {
     }
   }
 
+  Future logout() async {
+    await repository.logout();
+
+    MeetingClient().close(logout: true);
+    await DataSp.removeLoginCertificate();
+
+    return;
+  }
+
   String get _meetingName => sprintf(StrRes.meetingInitiatorIs, [userInfo.nickname]);
 }
 

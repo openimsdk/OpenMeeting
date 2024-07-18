@@ -3553,10 +3553,18 @@ class MeetingHostData extends $pb.GeneratedMessage {
 class CleanPreviousMeetingsReq extends $pb.GeneratedMessage {
   factory CleanPreviousMeetingsReq({
     $core.String? userID,
+    $core.int? reasonCode,
+    $core.String? reason,
   }) {
     final $result = create();
     if (userID != null) {
       $result.userID = userID;
+    }
+    if (reasonCode != null) {
+      $result.reasonCode = reasonCode;
+    }
+    if (reason != null) {
+      $result.reason = reason;
     }
     return $result;
   }
@@ -3566,6 +3574,8 @@ class CleanPreviousMeetingsReq extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CleanPreviousMeetingsReq', package: const $pb.PackageName(_omitMessageNames ? '' : 'openmeeting.meeting'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'userID', protoName: 'userID')
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'reasonCode', $pb.PbFieldType.O3, protoName: 'reasonCode')
+    ..aOS(3, _omitFieldNames ? '' : 'reason')
     ..hasRequiredFields = false
   ;
 
@@ -3598,6 +3608,24 @@ class CleanPreviousMeetingsReq extends $pb.GeneratedMessage {
   $core.bool hasUserID() => $_has(0);
   @$pb.TagNumber(1)
   void clearUserID() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get reasonCode => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set reasonCode($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasReasonCode() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearReasonCode() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get reason => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set reason($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasReason() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearReason() => clearField(3);
 }
 
 class CleanPreviousMeetingsResp extends $pb.GeneratedMessage {

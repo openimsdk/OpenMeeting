@@ -46,6 +46,25 @@ class Apis {
     }
   }
 
+  static Future logout() async {
+    try {
+      final result = await _showHud(
+        () => ApiService().post(
+          Urls.logout,
+          data: {
+            'userID': DataSp.userID,
+          },
+        ),
+      );
+
+      return result;
+    } catch (e, s) {
+      _catchError(e, s);
+
+      return Future.error(e);
+    }
+  }
+
   static Future<UpgradeInfoV2> checkUpgradeV2() {
     return ApiService().dio.post<Map<String, dynamic>>(
       'https://www.pgyer.com/apiv2/app/check',
@@ -67,6 +86,9 @@ class Apis {
 
   static Future getMeetings(Map<String, dynamic> params) async {
     try {
+      if (DataSp.userID == null) {
+        return null;
+      }
       final result = await _showHud(
         () => ApiService().post(
           Urls.getMeetings,

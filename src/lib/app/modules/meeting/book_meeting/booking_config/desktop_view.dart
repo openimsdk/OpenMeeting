@@ -437,20 +437,30 @@ class _DesktopViewState extends State<DesktopView> {
 
     if (result?.isNotEmpty == true) {
       setState(() {
-        final index = timeSlots.indexWhere((element) => element == timeSlotsValueListenable.value);
-        bookingConfig.beginTime = DateTime.fromMillisecondsSinceEpoch(result!.first!.millisecondsSinceEpoch)
-            .add(Duration(minutes: index * 15))
-            .millisecondsSinceEpoch;
+        _paraseTime(result!.first!.millisecondsSinceEpoch, timeSlotsValueListenable.value);
       });
     }
-    print('${result}');
+    Logger.print('$result');
   }
 
   void _selectMeetingBeginTime(String value) async {
-    final index = timeSlots.indexWhere((element) => element == value);
-    bookingConfig.beginTime = DateTime.fromMillisecondsSinceEpoch(bookingConfig.beginTime)
-        .add(Duration(minutes: index * 15))
-        .millisecondsSinceEpoch;
+    _paraseTime(bookingConfig.beginTime, value);
+  }
+
+  void _paraseTime(int sinceEpoch, String time) {
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(sinceEpoch);
+
+    int year = dateTime.year;
+    int month = dateTime.month;
+    int day = dateTime.day;
+
+    final timeParts = time.split(':');
+    final hour = int.parse(timeParts[0]);
+    final minute = int.parse(timeParts[1]);
+
+    final newDataTime = DateTime(year, month, day, hour, minute);
+
+    bookingConfig.beginTime = newDataTime.millisecondsSinceEpoch;
   }
 
   void _selectMeetingDuration(String value) {

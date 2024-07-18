@@ -114,17 +114,17 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
   }
 
   void _parseDataReceived(DataReceivedEvent event) {
-    final jsonStr = utf8.decode(event.data);
-    final map = jsonDecode(jsonStr);
-    final result = NotifyMeetingData.create()..mergeFromProto3Json(map);
-    Logger.print('participant: ${event.participant?.identity} metadata: $map');
-
+    final result = NotifyMeetingData.fromBuffer(event.data);
     // kickofff
-    if (result.kickOffMeetingData.userID.isNotEmpty && result.kickOffMeetingData.isKickOff) {
+    if (result.hasKickOffMeetingData() &&
+        result.kickOffMeetingData.userID.isNotEmpty &&
+        result.kickOffMeetingData.isKickOff) {
       widget.room.disconnect();
       widget.onOperation?.call(context, OperationType.kickOff);
       return;
     }
+
+    if (!result.hasStreamOperateData()) return;
 
     final streamOperateData = result.streamOperateData;
 
@@ -138,18 +138,9 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
 
     if (operateUser == null) return;
 
-    final operations = List<Map<String, dynamic>>.from(map['streamOperateData']['operation']);
+    if (operateUser.hasCameraOnEntry()) {
+      final cameraOnEntry = operateUser.cameraOnEntry;
 
-    final operateUserMap = operations.firstWhereOrNull((element) {
-      return element['userID'] == widget.room.localParticipant?.identity;
-    });
-
-    if (operateUserMap == null) return;
-
-    final cameraOnEntry = operateUserMap['cameraOnEntry'] as bool?;
-    final microphoneOnEntry = operateUserMap['microphoneOnEntry'] as bool?;
-
-    if (cameraOnEntry != null) {
       if (cameraOnEntry) {
         MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingEnableVideo]),
             forMobile: true, confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
@@ -160,7 +151,9 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
       }
     }
 
-    if (microphoneOnEntry != null) {
+    if (operateUser.hasMicrophoneOnEntry()) {
+      final microphoneOnEntry = operateUser.microphoneOnEntry;
+
       if (microphoneOnEntry) {
         MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingUnmute]),
             forMobile: true, confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
@@ -170,7 +163,6 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
         widget.room.localParticipant?.setMicrophoneEnabled(microphoneOnEntry);
       }
     }
-    Logger.print(jsonStr);
   }
 
   void _parseRoomMetadata() {

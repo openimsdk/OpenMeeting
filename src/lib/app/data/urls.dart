@@ -1,6 +1,7 @@
 
 class Urls {
   static const login = '/user/login';
+  static const logout = '/user/logout';
   static const upgrade = '/app/check';
 
   static const getMeetings = '/meeting/get_meetings';

@@ -61,8 +61,7 @@ class MeetingPage extends GetView<MeetingController> {
                                   text: StrRes.logout,
                                   iconWidget: const Icon(Icons.logout, color: Colors.red),
                                   onTap: () async {
-                                    MeetingClient().close();
-                                    await DataSp.removeLoginCertificate();
+                                    await controller.logout();
                                     AppNavigator.startBackLogin();
                                   },
                                 ),

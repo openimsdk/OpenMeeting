@@ -45,14 +45,16 @@ class MeetingClient {
 
   ValueChanged<bool>? onClose;
 
-  void close({bool kickoff = false}) async {
+  void close({bool kickoff = false, bool logout = false}) async {
     if (PlatformExt.isDesktop) {
       return;
     }
 
     roomID = null;
-    onClose?.call(kickoff);
 
+    if (!logout) {
+      onClose?.call(kickoff);
+    }
     if (_holder != null) {
       _holder?.remove();
       _holder = null;
