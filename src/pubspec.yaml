@@ -50,7 +50,7 @@ dependencies:
   percent_indicator: ^4.2.3
   app_installer: ^1.1.0
   flutter_datetime_picker_plus: ^2.1.0
-  livekit_client: 2.2.0
+  livekit_client: 2.2.2
   easy_sticky_header: ^1.1.1
   eva_icons_flutter: ^3.1.0
   flutter_background: ^1.2.0

@@ -67,6 +67,23 @@ class ImageButton extends StatelessWidget {
         expanded = false,
         enabled = true;
 
+  const ImageButton.switchCameraPosition({
+    super.key,
+    this.onTap,
+    this.iconWidth,
+    this.iconHeight,
+    this.width,
+    this.height,
+    this.color,
+    this.rightIcon,
+    this.onPressedRightIcon,
+    bool on = true,
+  })  : label = null,
+        textStyle = null,
+        icon = ImageRes.liveSwitchCamera,
+        expanded = false,
+        enabled = true;
+
   const ImageButton.expandArrow({
     super.key,
     this.onTap,

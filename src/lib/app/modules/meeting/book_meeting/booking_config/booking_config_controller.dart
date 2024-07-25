@@ -67,7 +67,7 @@ class BookingConfigController extends GetxController {
     super.onReady();
   }
 
-  void enterMeeting() async {
+  void bookingMeeting() async {
     if (bookingConfig.value.enableMeetingPassword) {
       if (bookingConfig.value.meetingPassword?.isEmpty == true) {
         IMViews.showToast(StrRes.plsEnterPassword);
@@ -84,8 +84,9 @@ class BookingConfigController extends GetxController {
         meetingID: meetingInfo!.meetingID,
         updatingUserID: userInfo.userId,
         title: bookingConfig.value.name,
-        scheduledTime:
-            Int64(bookingConfig.value.beginTime.toString().length > 10 ? bookingConfig.value.beginTime ~/ 1000 : bookingConfig.value.beginTime),
+        scheduledTime: Int64(bookingConfig.value.beginTime.toString().length > 10
+            ? bookingConfig.value.beginTime ~/ 1000
+            : bookingConfig.value.beginTime),
         meetingDuration: Int64(bookingConfig.value.duration),
         password: bookingConfig.value.meetingPassword,
         disableCameraOnJoin: !bookingConfig.value.enableCamera,
@@ -109,8 +110,9 @@ class BookingConfigController extends GetxController {
             scheduledTime: Int64(bookingConfig.value.beginTime),
             meetingDuration: Int64(bookingConfig.value.duration),
             password: bookingConfig.value.meetingPassword),
-        setting:
-            MeetingSetting(disableCameraOnJoin: !bookingConfig.value.enableCamera, disableMicrophoneOnJoin: !bookingConfig.value.enableMicrophone),
+        setting: MeetingSetting(
+            disableCameraOnJoin: !bookingConfig.value.enableCamera,
+            disableMicrophoneOnJoin: !bookingConfig.value.enableMicrophone),
         repeatInfo: MeetingRepeatInfo(
           endDate: Int64(bookingConfig.value.endsIn),
           repeatType: bookingConfig.value.repeatType.rawValue,
@@ -120,7 +122,8 @@ class BookingConfigController extends GetxController {
           repeatDaysOfWeek: bookingConfig.value.repeatDaysOfWeek?.map((e) => DayOfWeek.valueOf(e - 1)!),
         ),
       );
+
+      Get.back();
     }
-    Get.back();
   }
 }

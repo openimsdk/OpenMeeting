@@ -165,10 +165,10 @@ packages:
     dependency: transitive
     description:
       name: dart_webrtc
-      sha256: d663abfe6ed95afadcb64083e364aa16dbeaadead193bb03047cf6913e57b65e
+      sha256: ac7ef077084b3e54004716f1d736fcd839e1b60bc3f21f4122a35a9bb5ca2e47
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.6+hotfix.1"
+    version: "1.4.8"
   dbus:
     dependency: transitive
     description:
@@ -400,10 +400,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_webrtc
-      sha256: fd5f115a08dcdc00b988bea3003c956f1b60a78a61d899cbddfb44f5d0e44d4a
+      sha256: d305793e6737c59a81c45b18484e1f985710827704eeb9092573387efcbae272
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.8"
+    version: "0.11.5"
   font_awesome_flutter:
     dependency: transitive
     description:
@@ -536,10 +536,10 @@ packages:
     dependency: "direct main"
     description:
       name: livekit_client
-      sha256: e4e301c26bbba522897254986ad339d6acb59752d7679ff243d4dbee66ca4b95
+      sha256: e6b1e8a3cdcae95f7e62c0371590648444bac245fce3a1bcfb4ec05889ad82f3
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.0"
+    version: "2.2.2"
   logging:
     dependency: transitive
     description:

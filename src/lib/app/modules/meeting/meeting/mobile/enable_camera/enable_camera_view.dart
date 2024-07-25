@@ -24,7 +24,7 @@ class EnableCameraPage extends GetView<EnableCameraController> {
           ),
           const Spacer(),
           Button(
-            text: StrRes.enterMeeting,
+            text: StrRes.startMeeting,
             onTap: () {
               Get.back(result: controller.isEnableVideo.value);
             },

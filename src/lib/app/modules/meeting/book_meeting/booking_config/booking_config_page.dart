@@ -19,12 +19,25 @@ class BookingConfigPage extends GetView<BookingConfigController> {
   Widget build(BuildContext context) {
     return TouchCloseSoftKeyboard(
       child: Scaffold(
-        backgroundColor: Colors.grey.shade200,
+        backgroundColor: Colors.grey.shade100,
         appBar: CupertinoNavigationBar(
           middle: Text(StrRes.bookAMeeting),
+          trailing: (PlatformExt.isDesktop)
+              ? null
+              : CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  child: Text(StrRes.done),
+                  onPressed: () {
+                    controller.bookingMeeting();
+                    Get.back();
+                  },
+                ),
         ),
         body: Column(
           children: [
+            const SizedBox(
+              height: 10,
+            ),
             Flexible(
               child: SingleChildScrollView(
                 keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -33,18 +46,19 @@ class BookingConfigPage extends GetView<BookingConfigController> {
               ),
             ),
             _verSpace,
-            LayoutBuilder(
-              builder: (_, constraints) {
-                return ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: 52.h, maxHeight: 52.h, minWidth: constraints.maxWidth - 32),
-                  child: CupertinoButton.filled(
-                    onPressed: controller.enterMeeting,
-                    padding: EdgeInsets.zero,
-                    child: Text(controller.isModify ? StrRes.save : StrRes.bookAMeeting),
-                  ),
-                );
-              },
-            ),
+            if (PlatformExt.isDesktop)
+              LayoutBuilder(
+                builder: (_, constraints) {
+                  return ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: 52.h, maxHeight: 52.h, minWidth: constraints.maxWidth - 32),
+                    child: CupertinoButton.filled(
+                      onPressed: controller.bookingMeeting,
+                      padding: EdgeInsets.zero,
+                      child: Text(controller.isModify ? StrRes.save : StrRes.bookAMeeting),
+                    ),
+                  );
+                },
+              ),
             _verSpace,
           ],
         ),
@@ -141,13 +155,13 @@ class BookingConfigPage extends GetView<BookingConfigController> {
             onTap?.call();
           },
           child: Container(
-            height: 46.h,
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            height: 58.h,
+            padding: EdgeInsets.symmetric(horizontal: 17.h),
             child: Row(
               children: [
                 label.toText..style = textStyle ?? Styles.ts_0C1C33_17sp,
                 const Spacer(),
-                if (null != value) value.toText..style = Styles.ts_8E9AB0_17sp,
+                if (null != value) value.toText..style = Styles.ts_0C1C33_17sp,
                 if (onChanged != null)
                   CupertinoSwitch(
                     value: switchOn,

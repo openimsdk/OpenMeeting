@@ -40,7 +40,7 @@ class Config {
 
   static const double textScaleFactor = 1.0;
 
-  static const _host = '43.154.157.177';
+  static const _host = '116.205.175.233';
 
   static const _ipRegex = '((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)';
 

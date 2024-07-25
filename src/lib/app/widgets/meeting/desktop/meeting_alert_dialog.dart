@@ -432,4 +432,72 @@ class MeetingAlertDialog {
       showDialog(context: context, builder: (ctx) => buildContent(ctx));
     }
   }
+
+  MeetingAlertDialog.showInProgressByTerminal(
+    BuildContext context, {
+    required VoidCallback onConfirm,
+    bool forMobile = true,
+  }) {
+    Widget buildContent(BuildContext ctx) {
+      return Dialog(
+        child: Container(
+          width: 300,
+          padding: const EdgeInsets.only(top: 16),
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(StrRes.inProgressByTerminalHint, style: Styles.ts_0C1C33_17sp),
+              ),
+              const Divider(
+                height: 1,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: CupertinoButton(
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      child: Text(StrRes.cancel, style: TextStyle().copyWith(color: Colors.grey)),
+                      onPressed: () {
+                        if (forMobile) {
+                          OverlayWidget().hideDialog();
+                        } else {
+                          Navigator.pop(context);
+                        }
+                      },
+                    ),
+                  ),
+                  Container(height: 50, width: 1, color: Colors.grey.shade400),
+                  Expanded(
+                    child: CupertinoButton(
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      child: Text(StrRes.restore),
+                      onPressed: () {
+                        if (forMobile) {
+                          OverlayWidget().hideDialog();
+                        } else {
+                          Navigator.of(context).pop();
+                        }
+                        onConfirm();
+                      },
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (forMobile) {
+      OverlayWidget().showDialog(context: context, child: buildContent(context));
+    } else {
+      showDialog(context: context, builder: (ctx) => buildContent(ctx));
+    }
+  }
 }

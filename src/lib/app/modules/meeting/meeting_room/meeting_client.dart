@@ -7,6 +7,7 @@ import 'package:openim_common/openim_common.dart';
 import 'package:openmeeting/app/data/models/define.dart';
 import 'package:openmeeting/app/data/models/meeting.pb.dart';
 import 'package:openmeeting/app/data/services/repository/repository.dart';
+import 'package:openmeeting/core/data_sp.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../../core/multi_window_manager.dart';
@@ -93,10 +94,18 @@ class MeetingClient {
   }
 
   void sendBusyMessage(bool b) {
-    if (!PlatformExt.isDesktop) {
-      return;
+    if (PlatformExt.isDesktop) {
+      windowsManager.call(WindowType.main, WindowEvent.sendMessage, {
+        'inMeeting': {
+          'isBusy': b,
+          if (roomID != null) 'id': roomID,
+        }
+      });
+    } else {
+      if (roomID != null) {
+        DataSp.putMeetingInProgress(roomID!);
+      }
     }
-    windowsManager.call(WindowType.main, WindowEvent.sendMessage, {'isBusy': b});
   }
 
   void sendKickoffMessage() {
@@ -155,6 +164,8 @@ class MeetingClient {
       _room = room;
       this.roomID = roomID;
 
+      sendBusyMessage(true);
+
       if (PlatformExt.isDesktop) {
         return (room: room, listener: listener);
       } else {
@@ -179,6 +190,7 @@ class MeetingClient {
         return (room: room, listener: listener);
       }
     } catch (error, trace) {
+      sendBusyMessage(false);
       close();
       Logger.print("error:$error  stack:$trace");
       if (error.toString().contains('NotExist')) {

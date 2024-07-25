@@ -1190,4 +1190,8 @@ class StrRes {
   static String get appointNewHostHint => 'appointNewHostHint'.tr;
   static String get gridView => 'gridView'.tr;
   static String get gridViewHint => 'gridViewHint'.tr;
+  static String get inProgressByTerminalHint => 'inProgressByTerminalHint'.tr;
+  static String get restore => 'restore'.tr;
+  static String get done => 'done'.tr;
+  static String get startMeeting => 'startMeeting'.tr;
 }

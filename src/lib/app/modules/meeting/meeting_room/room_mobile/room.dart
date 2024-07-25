@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:openmeeting/app/data/models/pb_extension.dart';
+import 'package:openmeeting/app/widgets/meeting/desktop/default_layout_view.dart';
 import 'package:openmeeting/app/widgets/meeting/desktop/meeting_alert_dialog.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:sprintf/sprintf.dart';
@@ -42,6 +43,8 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
   int _pages = 0;
   String loginUserID = MeetingClient().userInfo.userID;
   final repository = MeetingRepository();
+  bool get anyOneHasVideo => participantTracks.any((e) =>
+      (e.screenShareTrack != null && !e.screenShareTrack!.muted) || (e.videoTrack != null && !e.videoTrack!.muted));
 
   @override
   void initState() {
@@ -81,15 +84,23 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
     ..on<LocalTrackPublishedEvent>((_) => _sortParticipants())
     ..on<LocalTrackUnpublishedEvent>((_) => _sortParticipants())
     ..on<ParticipantConnectedEvent>((event) {
-      print('ParticipantConnectedEvent: ${event.participant.identity}, name => ${event.participant.name}');
+      print('ParticipantConnectedEvent: ${event.participant.identity}, name => ${event.participant.identity}');
       _sortParticipants();
     })
     ..on<ParticipantDisconnectedEvent>((event) {
-      print('ParticipantConnectedEvent: ${event.participant.identity}, name => ${event.participant.name}');
+      print('ParticipantConnectedEvent: ${event.participant.identity}, name => ${event.participant.identity}');
       _sortParticipants();
     })
     ..on<ParticipantNameUpdatedEvent>((event) {
       print('Participant name updated: ${event.participant.identity}, name => ${event.name}');
+      _sortParticipants();
+    })
+    ..on<TrackMutedEvent>((event) {
+      print('Participant name updated: ${event.participant.identity}, name => ${event.participant.identity}');
+      _sortParticipants();
+    })
+    ..on<TrackUnmutedEvent>((event) {
+      print('Participant name updated: ${event.participant.identity}, name => ${event.participant.identity}');
       _sortParticipants();
     })
     ..on<RoomMetadataChangedEvent>((event) => _parseRoomMetadata())
@@ -192,7 +203,7 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
 
   void _sortParticipants() {
     List<ParticipantTrack> participantTracks = [];
-
+    Logger.print('=====sortParticipants: ${widget.room.remoteParticipants.length}');
     for (var participant in widget.room.remoteParticipants.values) {
       // 排除观察者
       if (widget.roomID == participant.identity) {
@@ -288,87 +299,98 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
   @override
   Widget buildChild() => Container(
         color: Color(0xFF333333),
-        child: Stack(
-          children: [
-            widget.room.remoteParticipants.isEmpty
-                ? (_localParticipantTrack == null
-                    ? const SizedBox()
-                    : ParticipantWidget.widgetFor(_localParticipantTrack!,
-                        options: widget.options,
-                        isZoom: true,
-                        useScreenShareTrack: true,
-                        audioEncouragement: meetingInfo?.setting.audioEncouragement == true, onTapSwitchCamera: () {
-                        _localParticipantTrack!.toggleCamera();
-                      }))
-                : StatefulBuilder(
-                    builder: (v, status) {
-                      return GestureDetector(
-                        child: NotificationListener(
-                          onNotification: (v) {
-                            if (v is FirstPageZoomNotification) {
-                              scrollPhysics = v.isZoom ? const NeverScrollableScrollPhysics() : null;
-                              status.call(() {});
-                              return true;
-                            }
-                            return false;
-                          },
-                          child: PageView.builder(
-                            physics: scrollPhysics,
-                            itemBuilder: (context, index) {
-                              final existVideoTrack = null != _firstParticipantTrack;
-                              if (existVideoTrack && index == 0) {
-                                return GestureDetector(
-                                  child: FirstPage(
-                                    participantTrack: _firstParticipantTrack!,
-                                    options: widget.options,
-                                  ),
-                                  onTap: () {
-                                    toggleFullScreen();
-                                  },
-                                );
-                              }
-                              return OtherPage(
-                                participantTracks: participantTracks,
-                                pages: existVideoTrack ? index - 1 : index,
-                                options: widget.options,
-                                onDoubleTap: (t) {
-                                  setState(() {
-                                    customWatchedUser(t.participant.identity);
-                                    _pageController.jumpToPage(0);
-                                  });
-                                },
-                              );
-                            },
-                            itemCount: pageCount,
-                            onPageChanged: _onPageChange,
-                            controller: _pageController,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-            if (widget.room.remoteParticipants.isNotEmpty && pageCount > 1)
-              Positioned(
-                bottom: 8.h,
-                child: PageViewDotIndicator(
-                  currentItem: _pages,
-                  count: pageCount,
-                  size: Size(8.w, 8.h),
-                  unselectedColor: Styles.c_FFFFFF_opacity50,
-                  selectedColor: Styles.c_FFFFFF,
-                ),
-              ),
-            Positioned(
-              right: 16.w,
-              bottom: 16.h,
-              child: ImageRes.meetingRotateScreen.toImage
-                ..width = 44.w
-                ..height = 44.h
-                ..onTap = rotateScreen,
-            )
-          ],
-        ),
+        child: anyOneHasVideo ? _buildGridView() : _buildDefaultView(),
       );
+
+  Widget _buildDefaultView() {
+    return DefaultLayoutView(
+      participantTracks: participantTracks,
+      defaultForMobile: true,
+    );
+  }
+
+  Widget _buildGridView() {
+    return Stack(
+      children: [
+        widget.room.remoteParticipants.isEmpty
+            ? (_localParticipantTrack == null
+                ? const SizedBox()
+                : ParticipantWidget.widgetFor(_localParticipantTrack!,
+                    options: widget.options,
+                    isZoom: true,
+                    useScreenShareTrack: true,
+                    audioEncouragement: meetingInfo?.setting.audioEncouragement == true, onTapSwitchCamera: () {
+                    _localParticipantTrack!.toggleCamera();
+                  }))
+            : StatefulBuilder(
+                builder: (v, status) {
+                  return GestureDetector(
+                    child: NotificationListener(
+                      onNotification: (v) {
+                        if (v is FirstPageZoomNotification) {
+                          scrollPhysics = v.isZoom ? const NeverScrollableScrollPhysics() : null;
+                          status.call(() {});
+                          return true;
+                        }
+                        return false;
+                      },
+                      child: PageView.builder(
+                        physics: scrollPhysics,
+                        itemBuilder: (context, index) {
+                          final existVideoTrack = null != _firstParticipantTrack;
+                          if (existVideoTrack && index == 0) {
+                            return GestureDetector(
+                              child: FirstPage(
+                                participantTrack: _firstParticipantTrack!,
+                                options: widget.options,
+                              ),
+                              onTap: () {
+                                toggleFullScreen();
+                              },
+                            );
+                          }
+                          return OtherPage(
+                            participantTracks: participantTracks,
+                            pages: existVideoTrack ? index - 1 : index,
+                            options: widget.options,
+                            onDoubleTap: (t) {
+                              setState(() {
+                                customWatchedUser(t.participant.identity);
+                                _pageController.jumpToPage(0);
+                              });
+                            },
+                          );
+                        },
+                        itemCount: pageCount,
+                        onPageChanged: _onPageChange,
+                        controller: _pageController,
+                      ),
+                    ),
+                  );
+                },
+              ),
+        if (widget.room.remoteParticipants.isNotEmpty && pageCount > 1)
+          Positioned(
+            bottom: 8.h,
+            child: PageViewDotIndicator(
+              currentItem: _pages,
+              count: pageCount,
+              size: Size(8.w, 8.h),
+              unselectedColor: Styles.c_FFFFFF_opacity50,
+              selectedColor: Styles.c_FFFFFF,
+            ),
+          ),
+        Positioned(
+          right: 16.w,
+          bottom: 16.h,
+          child: ImageRes.meetingRotateScreen.toImage
+            ..width = 44.w
+            ..height = 44.h
+            ..onTap = rotateScreen,
+        )
+      ],
+    );
+  }
 
   void _meetingClosed() => OverlayWidget().showDialog(
         context: context,

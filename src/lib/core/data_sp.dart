@@ -1,4 +1,3 @@
-import 'package:openim_common/openim_common.dart';
 import 'package:openmeeting/app/data/models/user_info.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:uuid/uuid.dart';
@@ -16,6 +15,7 @@ class DataSp {
   static const _meetingEnableSpeaker = '%s_meetingEnableSpeaker';
   static const _meetingEnableVideo = '%s_meetingEnableVideo';
   static const _meetingEnableVideoMirroring = '%s_meetingEnableVideoMirroring';
+  static const _meetingInProgress = '%_meetingInProgress';
 
   DataSp._();
 
@@ -108,5 +108,19 @@ class DataSp {
 
   static bool getMeetingEnableVideoMirroring() {
     return SpUtil().getBool(getKey(_meetingEnableVideoMirroring), defValue: false) ?? false;
+  }
+
+  static Future<bool>? putMeetingInProgress(String meetingID) {
+    return SpUtil().putString(getKey(_meetingInProgress), meetingID);
+  }
+
+  static String? getMeetingInProgress() {
+    return SpUtil().getString(
+      getKey(_meetingInProgress),
+    );
+  }
+
+  static Future<bool>? removeMeetingInProgress() {
+    return SpUtil().remove(getKey(_meetingInProgress));
   }
 }

@@ -8,13 +8,13 @@ PODS:
     - FlutterMacOS
   - flutter_local_notifications (0.0.1):
     - FlutterMacOS
-  - flutter_webrtc (0.9.36):
+  - flutter_webrtc (0.11.3):
     - FlutterMacOS
-    - WebRTC-SDK (= 114.5735.10)
+    - WebRTC-SDK (= 125.6422.04)
   - FlutterMacOS (1.0.0)
-  - livekit_client (2.2.0):
+  - livekit_client (2.2.2):
     - FlutterMacOS
-    - WebRTC-SDK (= 114.5735.10)
+    - WebRTC-SDK (= 125.6422.04)
   - package_info_plus (0.0.1):
     - FlutterMacOS
   - path_provider_foundation (0.0.1):
@@ -33,7 +33,7 @@ PODS:
     - FlutterMacOS
   - wakelock_plus (0.0.1):
     - FlutterMacOS
-  - WebRTC-SDK (114.5735.10)
+  - WebRTC-SDK (125.6422.04)
   - window_manager (0.2.0):
     - FlutterMacOS
   - window_size (0.0.2):
@@ -103,9 +103,9 @@ SPEC CHECKSUMS:
   desktop_multi_window: 566489c048b501134f9d7fb6a2354c60a9126486
   device_info_plus: ce1b7762849d3ec103d0e0517299f2db7ad60720
   flutter_local_notifications: 3805ca215b2fb7f397d78b66db91f6a747af52e4
-  flutter_webrtc: 823284e171ecb2487b7210c214886a949c122a59
+  flutter_webrtc: 2b4e4a2de70a1485836e40fd71a7a94c77d49bd9
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
-  livekit_client: 9b39e0f1b8e1a8ec794bb72a4f9bbfc28c959ece
+  livekit_client: c24af2b8474a39325596e714118e05551ec5eacc
   package_info_plus: fa739dd842b393193c5ca93c26798dff6e3d0e0c
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   screen_retriever: 59634572a57080243dd1bf715e55b6c54f241a38
@@ -114,7 +114,7 @@ SPEC CHECKSUMS:
   texture_rgba_renderer: cbed959a3c127122194a364e14b8577bd62dc8f2
   url_launcher_macos: 5f437abeda8c85500ceb03f5c1938a8c5a705399
   wakelock_plus: 4783562c9a43d209c458cb9b30692134af456269
-  WebRTC-SDK: 8c0edd05b880a39648118192c252667ea06dea51
+  WebRTC-SDK: c3d69a87e7185fad3568f6f3cff7c9ac5890acf3
   window_manager: 3a1844359a6295ab1e47659b1a777e36773cd6e8
   window_size: 339dafa0b27a95a62a843042038fa6c3c48de195
 

@@ -41,7 +41,7 @@ abstract class ParticipantWidget extends StatefulWidget {
       bool focusModel = false,
       Color? backgroundColor,
       bool audioEncouragement = true,
-      VoidCallback? onTapSwitchCamera}) {
+      VoidCallback? onTapSwitchCamera,}) {
     if (participantTrack.participant is LocalParticipant) {
       return LocalParticipantWidget(
         participantTrack.participant as LocalParticipant,
@@ -267,16 +267,16 @@ abstract class _ParticipantWidgetState<T extends ParticipantWidget> extends Stat
                       height: 70.h,
                     ),
                   ),
-            if (widget.onTapSwitchCamera != null)
-              Align(
-                alignment: Alignment.topLeft,
-                child: CupertinoButton(
-                    onPressed: widget.onTapSwitchCamera,
-                    child: const Icon(
-                      Icons.switch_camera,
-                      color: Colors.white,
-                    )),
-              ),
+            // if (widget.onTapSwitchCamera != null)
+            //   Align(
+            //     alignment: Alignment.topLeft,
+            //     child: CupertinoButton(
+            //         onPressed: widget.onTapSwitchCamera,
+            //         child: const Icon(
+            //           Icons.switch_camera,
+            //           color: Colors.white,
+            //         )),
+            //   ),
             // Bottom bar
             if (PlatformExt.isDesktop) _buildParticipantInfoForDesktop() else _buildParticipantInfoForMobile(),
           ],

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:openmeeting/app/data/models/meeting.pb.dart';
 import 'package:openmeeting/app/data/models/pb_extension.dart';
+import 'package:openmeeting/app/widgets/meeting/desktop/meeting_alert_dialog.dart';
 import 'package:openmeeting/core/app_controller.dart';
 import 'package:openmeeting/core/extension.dart';
 import 'package:openmeeting/routes/app_navigator.dart';
@@ -38,6 +39,7 @@ class MeetingController extends GetxController with WindowListener {
     super.onInit();
     queryUnfinishedMeeting();
     // queryMeetingInTimer();
+    queryUnfinishedMeetingByTerminal();
 
     windowManager.addListener(this);
 
@@ -45,7 +47,7 @@ class MeetingController extends GetxController with WindowListener {
       Logger.print("[Main] call ${call.method} with args ${call.arguments} from window $fromWindowId");
       if (call.method == WindowEvent.sendMessage.rawValue) {
         final params = Map<String, dynamic>.from(call.arguments);
-        final isBusy = params['isBusy'];
+        final inMeeting = params['inMeeting'];
         final isKickoff = params['isKickoff'];
 
         if (isKickoff != null) {
@@ -55,7 +57,13 @@ class MeetingController extends GetxController with WindowListener {
             queryUnfinishedMeeting();
           }
         }
-        if (isBusy != null) {
+        if (inMeeting != null) {
+          final isBusy = inMeeting['isBusy'];
+          final meetingID = inMeeting['id'];
+          if (meetingID != null) {
+            DataSp.putMeetingInProgress(meetingID);
+          }
+
           MeetingClient().busy = isBusy;
         }
       }
@@ -116,6 +124,19 @@ class MeetingController extends GetxController with WindowListener {
     Future.delayed(Duration.zero, () async {
       exit(0);
     });
+  }
+
+  void queryUnfinishedMeetingByTerminal() async {
+    final meetingID = DataSp.getMeetingInProgress();
+    if (meetingID?.isNotEmpty == true) {
+      final result = await repository.getMeetingInfo(meetingID!, userInfo.userId);
+      if (result != null && result.status == MeetingStatus.inProgress) {
+        MeetingAlertDialog.showInProgressByTerminal(Get.context!, onConfirm: () {
+          quickEnterMeeting(meetingID);
+          DataSp.removeMeetingInProgress();
+        });
+      }
+    }
   }
 
   Future queryUnfinishedMeeting() async {

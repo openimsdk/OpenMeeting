@@ -15,7 +15,8 @@ class LoginPage extends GetView<LoginController> {
           child: Column(
             children: [
               100.verticalSpace,
-              ImageRes.meetingLoginLogo.toImage..width = 307.w,
+              ImageRes.meetingLoginLogo.toImage
+                ..width = 307.w,
               56.verticalSpace,
               InputBox(
                 label: StrRes.account,
@@ -38,7 +39,7 @@ class LoginPage extends GetView<LoginController> {
                     margin: EdgeInsets.symmetric(horizontal: 32.w),
                   )),
               32.verticalSpace,
-              Obx(() => '${controller.versionInfo.value}'.toText..style = Styles.ts_0C1C33_14sp),
+              Obx(() => controller.versionInfo.value.toText..style = Styles.ts_0C1C33_14sp),
             ],
           ),
         ),

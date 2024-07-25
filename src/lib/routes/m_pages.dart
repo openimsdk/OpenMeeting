@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:openmeeting/routes/app_pages.dart';
 
 import '../app/modules/meeting/book_meeting/booking_config/booking_config_binding.dart';
 import '../app/modules/meeting/book_meeting/booking_config/booking_config_page.dart';

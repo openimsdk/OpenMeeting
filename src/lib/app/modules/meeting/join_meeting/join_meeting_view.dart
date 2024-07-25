@@ -22,6 +22,10 @@ class JoinMeetingPage extends GetView<JoinMeetingController> {
                 12.verticalSpace,
                 _buildInputItemView(
                   label: StrRes.meetingNo,
+                  subWidget: const Text(
+                    '*',
+                    style: TextStyle(color: Colors.red),
+                  ),
                   hintText: StrRes.plsInputMeetingNo,
                   controller: controller.meetingNumberCtrl,
                 ),
@@ -122,6 +126,7 @@ class JoinMeetingPage extends GetView<JoinMeetingController> {
 
   Widget _buildInputItemView({
     required String label,
+    Widget? subWidget,
     TextEditingController? controller,
     String? hintText,
     Function()? onTap,
@@ -132,14 +137,12 @@ class JoinMeetingPage extends GetView<JoinMeetingController> {
         child: Container(
           height: 58.h,
           color: Styles.c_FFFFFF,
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.symmetric(horizontal: 17.h),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                constraints: BoxConstraints(minWidth: 80.w),
-                child: label.toText..style = Styles.ts_0C1C33_17sp_medium,
-              ),
+              label.toText..style = Styles.ts_0C1C33_17sp,
+              if (subWidget != null) subWidget,
               10.horizontalSpace,
               Expanded(
                 child: TextField(
@@ -170,7 +173,8 @@ class JoinMeetingPage extends GetView<JoinMeetingController> {
       controller.joinMeeting(null);
       return;
     }
-    MeetingAlertDialog.showEnterMeetingWithPasswordDialog(Get.context!, info.creatorNickname, onConfirm: (password) async {
+    MeetingAlertDialog.showEnterMeetingWithPasswordDialog(Get.context!, info.creatorNickname,
+        onConfirm: (password) async {
       final result = await controller.joinMeeting(password);
 
       if (!result) {

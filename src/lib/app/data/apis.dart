@@ -326,7 +326,7 @@ class Apis {
   static void _catchError(Object e, StackTrace s, {bool forceBack = true}) {
     if (e is ApiException) {
       var msg = '${e.code}'.tr;
-      if (msg.isEmpty) {
+      if (msg.isEmpty || e.code.toString() == msg) {
         msg = e.message ?? 'Unkonw error';
       }
       // IMViews.showToast(msg);
@@ -337,7 +337,7 @@ class Apis {
           content: 'operationID: ${e.operationID}',
         ),
       );
-      if ((e.code == 10010 || e.code == 10002) && forceBack) {
+      if ((e.code == 100010 || e.code == 100002) && forceBack) {
         DataSp.removeLoginCertificate();
         AppNavigator.startBackLogin();
       }

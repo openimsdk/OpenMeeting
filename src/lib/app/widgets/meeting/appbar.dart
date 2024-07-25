@@ -17,6 +17,7 @@ class MeetingRoomMobileAppBar extends StatelessWidget {
     this.onEndMeeting,
     this.onTapSpeakerphone,
     this.onViewMeetingDetail,
+    this.onTapSwitchCameraPosition,
   });
 
   final String? title;
@@ -26,6 +27,7 @@ class MeetingRoomMobileAppBar extends StatelessWidget {
   final Function()? onMinimize;
   final Function()? onTapSpeakerphone;
   final Function()? onViewMeetingDetail;
+  final VoidCallback? onTapSwitchCameraPosition;
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -36,23 +38,21 @@ class MeetingRoomMobileAppBar extends StatelessWidget {
             Row(
               children: [
                 ImageButton.minimize(
-                  width: 48.w,
+                  width: 36.w,
                   height: 48.h,
                   onTap: onMinimize,
                 ),
                 ImageButton.trumpet(
-                  width: 48.w,
+                  width: 36.w,
                   height: 48.h,
                   on: openSpeakerphone,
                   onTap: onTapSpeakerphone,
                 ),
-                // ImageRes.liveClose.toImage
-                //   ..width = 30.w
-                //   ..height = 30.h,
-                // 12.horizontalSpace,
-                // ImageRes.meetingTrumpet.toImage
-                //   ..width = 30.w
-                //   ..height = 30.h,
+                ImageButton.switchCameraPosition(
+                  width: 36.w,
+                  height: 48.h,
+                  onTap: onTapSwitchCameraPosition,
+                ),
                 const Spacer(),
                 GestureDetector(
                   onTap: onEndMeeting,

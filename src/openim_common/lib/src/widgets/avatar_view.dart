@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:uuid/uuid.dart';
 
@@ -45,14 +46,15 @@ class AvatarView extends StatelessWidget {
 
   double get _avatarSize => min(width ?? 44.w, height ?? 44.h);
 
-  TextStyle get _textStyle => textStyle ?? Styles.ts_FFFFFF_16sp;
+  TextStyle get _textStyle => textStyle ?? Styles.ts_FFFFFF_17sp;
 
   Color get _textAvatarBgColor => Styles.c_0089FF;
 
   String? get _showName {
     if (isGroup) return null;
     if (text != null && text!.trim().isNotEmpty) {
-      return text!.substring(0, 1);
+      return text!.substring(0, 2);
+      // return text!;
     }
     return null;
   }
@@ -97,7 +99,7 @@ class AvatarView extends StatelessWidget {
                     size: _avatarSize / 2,
                   )
                 : null)
-            : Text(_showName!, style: _textStyle),
+            : Text(_showName!, style: _textStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
       );
 
   Widget _networkImageAvatar() => ImageUtil.networkImage(

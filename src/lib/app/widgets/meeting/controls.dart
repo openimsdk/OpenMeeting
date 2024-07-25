@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
@@ -305,6 +306,23 @@ class _ControlsViewState extends State<ControlsView> {
     setState(() {});
   }
 
+  void _onSwitchCameraPositon() async {
+    final track = widget.room.localParticipant?.videoTrackPublications.firstOrNull?.track;
+
+    if (track == null || track.muted) {
+      return;
+    }
+    try {
+      final newPosition = (track.currentOptions as CameraCaptureOptions).cameraPosition == CameraPosition.front
+          ? CameraPosition.back
+          : CameraPosition.front;
+      await track.setCameraPosition(newPosition);
+    } catch (error) {
+      print('could not restart track: $error');
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -332,6 +350,7 @@ class _ControlsViewState extends State<ControlsView> {
                       },
                       onTapSpeakerphone: _onTapSpeaker,
                       onViewMeetingDetail: _viewMeetingDetail,
+                      onTapSwitchCameraPosition: _onSwitchCameraPositon,
                     )),
           Expanded(child: widget.child),
           Visibility(

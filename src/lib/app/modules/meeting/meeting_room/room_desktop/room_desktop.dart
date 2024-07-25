@@ -82,8 +82,8 @@ class _MeetingRoomState extends MeetingViewState<MeetingDesktopRoom> {
     ..on<ParticipantConnectedEvent>((_) => _sortParticipants())
     ..on<ParticipantDisconnectedEvent>((_) => _sortParticipants())
     ..on<RoomMetadataChangedEvent>((event) => _parseRoomMetadata())
-    // ..on<TrackMutedEvent>((event) => _onTrackMuted(event))
-    // ..on<TrackUnmutedEvent>((event) => _onTrackUnMuted(event))
+    ..on<TrackMutedEvent>((event) => _sortParticipants())
+    ..on<TrackUnmutedEvent>((event) => _sortParticipants())
     ..on<DataReceivedEvent>((event) => _parseDataReceived(event));
 
   void _askPublish() async {
