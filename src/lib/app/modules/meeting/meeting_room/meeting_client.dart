@@ -225,7 +225,7 @@ class MeetingClient {
         closeWindow();
         break;
       case OperationType.end:
-        await MeetingRepository().endMeeting(roomID!, loginUserID);
+        await MeetingRepository().endMeeting(roomID!, loginUserID, MeetingEndType.EndType);
         close();
         closeWindow();
         break;

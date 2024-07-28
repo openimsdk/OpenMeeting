@@ -1553,6 +1553,7 @@ class EndMeetingReq extends $pb.GeneratedMessage {
   factory EndMeetingReq({
     $core.String? meetingID,
     $core.String? userID,
+    MeetingEndType? endType,
   }) {
     final $result = create();
     if (meetingID != null) {
@@ -1560,6 +1561,9 @@ class EndMeetingReq extends $pb.GeneratedMessage {
     }
     if (userID != null) {
       $result.userID = userID;
+    }
+    if (endType != null) {
+      $result.endType = endType;
     }
     return $result;
   }
@@ -1570,6 +1574,7 @@ class EndMeetingReq extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'EndMeetingReq', package: const $pb.PackageName(_omitMessageNames ? '' : 'openmeeting.meeting'), createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'meetingID', protoName: 'meetingID')
     ..aOS(2, _omitFieldNames ? '' : 'userID', protoName: 'userID')
+    ..e<MeetingEndType>(3, _omitFieldNames ? '' : 'endType', $pb.PbFieldType.OE, protoName: 'endType', defaultOrMaker: MeetingEndType.CancelType, valueOf: MeetingEndType.valueOf, enumValues: MeetingEndType.values)
     ..hasRequiredFields = false
   ;
 
@@ -1611,6 +1616,15 @@ class EndMeetingReq extends $pb.GeneratedMessage {
   $core.bool hasUserID() => $_has(1);
   @$pb.TagNumber(2)
   void clearUserID() => clearField(2);
+
+  @$pb.TagNumber(3)
+  MeetingEndType get endType => $_getN(2);
+  @$pb.TagNumber(3)
+  set endType(MeetingEndType v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasEndType() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearEndType() => clearField(3);
 }
 
 /// Response after ending a meeting.

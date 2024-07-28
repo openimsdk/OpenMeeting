@@ -125,7 +125,7 @@ class MeetingDetailController extends GetxController {
 
   _cancelMeeting() {
     MeetingAlertDialog.show(Get.context!, StrRes.cancelMeetingConfirmHit, onConfirm: () async {
-      final result = await repository.endMeeting(meetingInfo.value.meetingID, userInfo.userId);
+      final result = await repository.endMeeting(meetingInfo.value.meetingID, userInfo.userId, MeetingEndType.CancelType);
 
       if (result) {
         IMViews.showToast(StrRes.changedSuccessfully);

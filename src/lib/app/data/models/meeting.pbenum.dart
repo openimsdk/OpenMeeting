@@ -55,5 +55,20 @@ class KickOffReason extends $pb.ProtobufEnum {
   const KickOffReason._($core.int v, $core.String n) : super(v, n);
 }
 
+class MeetingEndType extends $pb.ProtobufEnum {
+  static const MeetingEndType CancelType = MeetingEndType._(0, _omitEnumNames ? '' : 'CancelType');
+  static const MeetingEndType EndType = MeetingEndType._(1, _omitEnumNames ? '' : 'EndType');
+
+  static const $core.List<MeetingEndType> values = <MeetingEndType> [
+    CancelType,
+    EndType,
+  ];
+
+  static final $core.Map<$core.int, MeetingEndType> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static MeetingEndType? valueOf($core.int value) => _byValue[value];
+
+  const MeetingEndType._($core.int v, $core.String n) : super(v, n);
+}
+
 
 const _omitEnumNames = $core.bool.fromEnvironment('protobuf.omit_enum_names');

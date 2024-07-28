@@ -140,8 +140,8 @@ class MeetingRepository implements IMeetingRepository {
   }
 
   @override
-  Future<bool> endMeeting(String meetingID, String userID) async {
-    final params = {'meetingID': meetingID, 'userID': userID};
+  Future<bool> endMeeting(String meetingID, String userID, MeetingEndType type) async {
+    final params = {'meetingID': meetingID, 'userID': userID, 'endType': type.value};
 
     try {
       await Apis.endMeeting(params);

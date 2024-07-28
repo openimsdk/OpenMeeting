@@ -255,7 +255,7 @@ class _ParticipantsDesktopViewState extends ParticipantsViewState<ParticipantsDe
               ..style = Styles.ts_0C1C33_17sp
               ..maxLines = 1
               ..overflow = TextOverflow.ellipsis,
-            if (widget.loginUserID == _meetingInfo?.hostUserID && userID != widget.loginUserID)
+            if (isHost && userID == widget.loginUserID)
               Text(
                 '(${StrRes.meetingHost}, ${StrRes.me})',
                 style: Styles.ts_8E9AB0_12sp,
@@ -379,7 +379,7 @@ class _ParticipantsDesktopViewState extends ParticipantsViewState<ParticipantsDe
   }
 
   void _onTapMore(BuildContext ctx, String userID, String nickname) {
-    final itemIsHost = userID == _meetingInfo?.creatorUserID;
+    final itemIsHost = userID == _meetingInfo?.hostUserID;
 
     MeetingAlertDialog.showMemberSetting(ctx, forMobile: false, valueNotifier: valueNotifier, onEnableCamera: () {
       _disableParticipantCamera(userID, !valueNotifier.value.cameraIsEnable);

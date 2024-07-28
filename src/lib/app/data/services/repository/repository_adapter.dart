@@ -48,7 +48,7 @@ abstract class IMeetingRepository {
     throw UnimplementedError();
   }
 
-  Future<bool> endMeeting(String meetingID, String userID) {
+  Future<bool> endMeeting(String meetingID, String userID, MeetingEndType type) {
     throw UnimplementedError();
   }
 

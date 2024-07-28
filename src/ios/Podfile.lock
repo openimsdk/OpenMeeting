@@ -11,12 +11,12 @@ PODS:
     - Flutter
   - flutter_native_splash (0.0.1):
     - Flutter
-  - flutter_webrtc (0.9.36):
+  - flutter_webrtc (0.11.3):
     - Flutter
-    - WebRTC-SDK (= 114.5735.10)
-  - livekit_client (2.2.0):
+    - WebRTC-SDK (= 125.6422.04)
+  - livekit_client (2.2.2):
     - Flutter
-    - WebRTC-SDK (= 114.5735.10)
+    - WebRTC-SDK (= 125.6422.04)
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -33,7 +33,7 @@ PODS:
     - Flutter
   - wakelock_plus (0.0.1):
     - Flutter
-  - WebRTC-SDK (114.5735.10)
+  - WebRTC-SDK (125.6422.04)
 
 DEPENDENCIES:
   - app_installer (from `.symlinks/plugins/app_installer/ios`)
@@ -95,8 +95,8 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_native_splash: edf599c81f74d093a4daf8e17bd7a018854bc778
-  flutter_webrtc: b33475c3a57d59ff05bf87b4f5d3feceac63f291
-  livekit_client: 2b3f5185f95d46d62d3570bf981f3d98ad3051e2
+  flutter_webrtc: 75b868e4f9e817c7a9a42ca4b6169063de4eec9f
+  livekit_client: c767049a635d5b6d43de3273dca3c439b8a6e970
   package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
@@ -104,7 +104,7 @@ SPEC CHECKSUMS:
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
   wakelock_plus: 78ec7c5b202cab7761af8e2b2b3d0671be6c4ae1
-  WebRTC-SDK: 8c0edd05b880a39648118192c252667ea06dea51
+  WebRTC-SDK: c3d69a87e7185fad3568f6f3cff7c9ac5890acf3
 
 PODFILE CHECKSUM: 3003a7d95e8a59d1b52038824bad0a4b90bc52ca
 
