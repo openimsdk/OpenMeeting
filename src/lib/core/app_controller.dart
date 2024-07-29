@@ -1,4 +1,3 @@
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,7 +10,7 @@ import '../app/widgets/upgrade_manager.dart';
 import 'data_sp.dart';
 // import 'package:tray_manager/tray_manager.dart';
 
-class AppController extends GetxController with UpgradeManger /*, TrayListener*/ {
+class AppController extends SuperController with UpgradeManger /*, TrayListener*/ {
   final _userInfo = Rx<UserInfo?>(null);
 
   UserInfo? get userInfo => _userInfo.value;
@@ -78,6 +77,28 @@ class AppController extends GetxController with UpgradeManger /*, TrayListener*/
   void _getDeviceInfo() async {
     final deviceInfoPlugin = DeviceInfoPlugin();
     deviceInfo = await deviceInfoPlugin.deviceInfo;
+  }
+
+  @override
+  void onDetached() {
+    MeetingClient().close();
+    MeetingClient().closeWindow();
+  }
+
+  @override
+  void onHidden() {
+  }
+
+  @override
+  void onInactive() {
+  }
+
+  @override
+  void onPaused() {
+  }
+
+  @override
+  void onResumed() {
   }
 /*
   Future<void> _setTrayIcon() async {

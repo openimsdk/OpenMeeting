@@ -52,6 +52,7 @@ class MeetingClient {
     }
 
     roomID = null;
+    _room?.disconnect();
 
     if (!logout) {
       onClose?.call(kickoff);

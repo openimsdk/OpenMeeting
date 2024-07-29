@@ -52,11 +52,11 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Please click "OK" to allow access. If you do not allow it, you will not be able to use the camera function.</string>
+	<string>Please click &quot;OK&quot; to allow access. If you do not allow it, you will not be able to use the camera function.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Please click "OK" to allow access. If you do not allow it, you will not be able to use the microphone function.</string>
+	<string>Please click &quot;OK&quot; to allow access. If you do not allow it, you will not be able to use the microphone function.</string>
 	<key>RTCAppGroupIdentifier</key>
-	<string>group.cn.rentsoft.openim.flutter.rtc</string>
+	<string>group.io.openim.flutter.b.meeting</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

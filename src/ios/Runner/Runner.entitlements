@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.cn.rentsoft.openim.flutter.rtc</string>
+		<string>group.io.openim.flutter.b.meeting</string>
 	</array>
 </dict>
 </plist>

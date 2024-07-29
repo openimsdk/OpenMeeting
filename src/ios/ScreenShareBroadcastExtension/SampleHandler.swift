@@ -2,10 +2,10 @@
 import ReplayKit
 import OSLog
 
-let broadcastLogger = OSLog(subsystem: "cn.rentsoft.openim.flutter.full", category: "Broadcast")
+let broadcastLogger = OSLog(subsystem: "group.io.openim.flutter.b.meeting", category: "Broadcast")
 private enum Constants {
     // the App Group ID value that the app and the broadcast extension targets are setup with. It differs for each app.
-    static let appGroupIdentifier = "group.cn.rentsoft.openim.flutter.rtc"
+    static let appGroupIdentifier = "group.io.openim.flutter.b.meeting"
 }
 
 class SampleHandler: RPBroadcastSampleHandler {
