@@ -51,7 +51,7 @@ class _MeetingSettingsSheetViewState extends State<MeetingSettingsSheetView> {
 
   _onOnlyHostCanShareScreen(value) {
     setState(() {
-      widget.setting.canParticipantsShareScreen = value;
+      widget.setting.canParticipantsShareScreen = !value;
     });
   }
 
@@ -123,7 +123,7 @@ class _MeetingSettingsSheetViewState extends State<MeetingSettingsSheetView> {
               ),
               _buildItemView(
                 label: StrRes.onlyHostShareScreen,
-                value: widget.setting.canParticipantsShareScreen,
+                value: !widget.setting.canParticipantsShareScreen,
                 onChanged: _onOnlyHostCanShareScreen,
               ),
               8.verticalSpace,
