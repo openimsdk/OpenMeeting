@@ -169,6 +169,12 @@ class JoinMeetingPage extends GetView<JoinMeetingController> {
       return;
     }
 
+    if (info.isLocked) {
+      IMViews.showToast(StrRes.meetingIsLocked);
+
+      return;
+    }
+
     if (!info.shouldCheckPassword || info.creatorUserID == controller.userInfo.userId) {
       controller.joinMeeting(null);
       return;
