@@ -51,8 +51,8 @@ class BookingConfigController extends GetxController {
       bookingConfig.value.meetingPassword = meetingInfo!.password;
       bookingConfig.value.enableMeetingPassword = meetingInfo!.password?.isNotEmpty == true;
       pswEditingController.text = meetingInfo!.password ?? '';
-      bookingConfig.value.enableCamera = meetingInfo!.setting.disableCameraOnJoin;
-      bookingConfig.value.enableMicrophone = meetingInfo!.setting.disableMicrophoneOnJoin;
+      bookingConfig.value.enableCamera = !meetingInfo!.setting.disableCameraOnJoin;
+      bookingConfig.value.enableMicrophone = !meetingInfo!.setting.disableMicrophoneOnJoin;
       bookingConfig.value.interval = meetingInfo!.repeatInfo.interval;
       bookingConfig.value.unit = UnitTypeExt.fromString(meetingInfo!.repeatInfo.uintType);
       bookingConfig.value.repeatType = meetingInfo!.repeatType;
@@ -122,8 +122,6 @@ class BookingConfigController extends GetxController {
           repeatDaysOfWeek: bookingConfig.value.repeatDaysOfWeek?.map((e) => DayOfWeek.valueOf(e - 1)!),
         ),
       );
-
-      Get.back();
     }
   }
 }
