@@ -264,7 +264,7 @@ class MeetingController extends GetxController with WindowListener {
           canParticipantsEnableCamera: true,
           canParticipantsShareScreen: true,
           canParticipantsUnmuteMicrophone: true,
-          disableCameraOnJoin: false,
+          disableCameraOnJoin: true,
           disableMicrophoneOnJoin: false),
     );
 

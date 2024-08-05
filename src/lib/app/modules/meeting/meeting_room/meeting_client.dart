@@ -233,6 +233,7 @@ class MeetingClient {
       case OperationType.setting:
         break;
       case OperationType.onlyClose:
+        close();
         closeWindow();
         break;
       case OperationType.kickOff:

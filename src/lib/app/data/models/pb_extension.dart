@@ -10,7 +10,7 @@ extension MeetingInfoSettingExt on MeetingInfoSetting {
   String get meetingName => info.creatorDefinedMeeting.title;
   int get scheduledTime => info.creatorDefinedMeeting.scheduledTime.toInt() * 1000;
   int get duration => info.creatorDefinedMeeting.meetingDuration.toInt() * 1000;
-  int get endTime => scheduledTime + duration * 1000;
+  int get endTime => scheduledTime + duration;
   String? get password => info.creatorDefinedMeeting.password;
   bool get shouldCheckPassword => password?.isNotEmpty == true;
   MeetingStatus get status => MeetingStatusExt.fromString(info.systemGenerated.status);

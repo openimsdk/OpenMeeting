@@ -71,10 +71,10 @@ class OverlayWidget {
 
 class DialogContainer extends StatefulWidget {
   const DialogContainer({
-    Key? key,
+    super.key,
     required this.child,
     this.onDismiss,
-  }) : super(key: key);
+  });
 
   final Widget child;
 

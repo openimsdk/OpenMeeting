@@ -4,9 +4,7 @@ import 'package:sprintf/sprintf.dart';
 
 import '../../../../../../core/app_controller.dart';
 import '../../../../../../core/data_sp.dart';
-import '../../../../../data/models/meeting_option.dart';
 import '../../../../../data/services/repository/repository_adapter.dart';
-import '../../../meeting_room/meeting_client.dart';
 
 class EnableCameraController extends GetxController {
   final isEnableVideo = false.obs;

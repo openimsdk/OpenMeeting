@@ -8,13 +8,9 @@ import 'package:sprintf/sprintf.dart';
 
 class MeetingAlertDialog {
   static void show(BuildContext context, String content,
-      {bool forMobile = false,
-      String? title,
-      String? confirmText,
-      VoidCallback? onConfirm,
-      String? cancelText,
-      VoidCallback? onCancel}) {
+      {String? title, String? confirmText, VoidCallback? onConfirm, String? cancelText, VoidCallback? onCancel}) {
     Logger.print('title:$title, content: $content');
+    final forMobile = PlatformExt.isMobile;
 
     Widget buildContent(BuildContext ctx) {
       return CustomDialog(
@@ -48,15 +44,15 @@ class MeetingAlertDialog {
     }
   }
 
-  static void showDisconnect(BuildContext context, String content,
-      {bool forMobile = false, String? confirmText, VoidCallback? onConfirm}) {
+  static void showDisconnect(BuildContext context, String content, {String? confirmText, VoidCallback? onConfirm}) {
     Logger.print('content: $content');
+    final forMobile = PlatformExt.isMobile;
 
     Widget buildContent(BuildContext ctx) {
       return AlertDialog(
         content: Text(
           content,
-          style: Styles.ts_0C1C33_12sp,
+          style: Styles.ts_0C1C33_17sp,
         ),
         actions: [
           TextButton(
@@ -86,10 +82,10 @@ class MeetingAlertDialog {
 
   static void showMuteAll(
     BuildContext context, {
-    bool forMobile = false,
     ValueChanged<bool>? onConfirm,
   }) {
     bool checkBoxValue = true;
+    final forMobile = PlatformExt.isMobile;
 
     Widget buildContent(BuildContext ctx) {
       return AlertDialog(
@@ -254,7 +250,6 @@ class MeetingAlertDialog {
 
   MeetingAlertDialog.showMemberSetting(
     BuildContext context, {
-    bool forMobile = true,
     required ValueNotifier<({bool cameraIsEnable, bool micIsEnable, String nickname, String userID})> valueNotifier,
     required VoidCallback onEnableCamera,
     required VoidCallback onEnableMic,
@@ -262,6 +257,8 @@ class MeetingAlertDialog {
     required VoidCallback? onSetHost,
     required VoidCallback? onKickoff,
   }) {
+    final forMobile = PlatformExt.isMobile;
+
     Widget buildContent(BuildContext ctx) {
       void hideDialog() {
         if (forMobile) {
@@ -358,8 +355,9 @@ class MeetingAlertDialog {
     String? title,
     required String nickname,
     required ValueChanged<String> onConfirm,
-    bool forMobile = true,
   }) {
+    final forMobile = PlatformExt.isMobile;
+
     final textController = TextEditingController(text: nickname);
     final focusNode = FocusNode();
 
@@ -436,8 +434,9 @@ class MeetingAlertDialog {
   MeetingAlertDialog.showInProgressByTerminal(
     BuildContext context, {
     required VoidCallback onConfirm,
-    bool forMobile = true,
   }) {
+    final forMobile = PlatformExt.isMobile;
+
     Widget buildContent(BuildContext ctx) {
       return Dialog(
         child: Container(

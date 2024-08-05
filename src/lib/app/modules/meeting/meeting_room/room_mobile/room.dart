@@ -1,26 +1,16 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:livekit_client/livekit_client.dart';
 import 'package:openim_common/openim_common.dart';
-import 'package:openmeeting/app/data/models/pb_extension.dart';
 import 'package:openmeeting/app/widgets/meeting/desktop/default_layout_view.dart';
-import 'package:openmeeting/app/widgets/meeting/desktop/meeting_alert_dialog.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
-import 'package:sprintf/sprintf.dart';
 
 import '../../../../data/models/define.dart';
-import '../../../../data/models/meeting.pb.dart';
-import '../../../../data/services/repository/repository.dart';
 import '../../../../widgets/meeting/meeting_view.dart';
-import '../../../../widgets/meeting/overlay_widget.dart';
 import '../../../../widgets/meeting/page_content.dart';
 import '../../../../widgets/meeting/participant.dart';
-import '../../../../widgets/meeting/participant_info.dart';
-import '../meeting_client.dart';
 
 class MeetingRoom extends MeetingView {
   const MeetingRoom(super.room, super.listener,
@@ -31,160 +21,14 @@ class MeetingRoom extends MeetingView {
 }
 
 class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
-  //
-  List<ParticipantTrack> participantTracks = [];
-
-  EventsListener<RoomEvent> get _listener => widget.listener;
-
-  bool get fastConnection => widget.room.engine.fastConnectOptions != null;
-
   ScrollPhysics? scrollPhysics;
   final _pageController = PageController();
   int _pages = 0;
-  String loginUserID = MeetingClient().userInfo.userID;
-  final repository = MeetingRepository();
-  bool get anyOneHasVideo => participantTracks.any((e) =>
-      (e.screenShareTrack != null && !e.screenShareTrack!.muted) || (e.videoTrack != null && !e.videoTrack!.muted));
-
-  @override
-  void initState() {
-    super.initState();
-    widget.room.addListener(_onRoomDidUpdate);
-    _setUpListeners();
-    _sortParticipants();
-    _parseRoomMetadata();
-    WidgetsBindingCompatible.instance?.addPostFrameCallback((_) {
-      startTimerCompleter.complete(true);
-      if (!fastConnection) {
-        _askPublish();
-      }
-    });
-  }
 
   @override
   void dispose() {
     _pageController.dispose();
-    // always dispose listener
-    (() async {
-      widget.room.removeListener(_onRoomDidUpdate);
-      await _listener.dispose();
-      // for (var e in widget.room.participants.values) {
-      //   await e.dispose();
-      // }
-      await widget.room.localParticipant?.dispose();
-      await widget.room.disconnect();
-      await widget.room.dispose();
-    })();
     super.dispose();
-  }
-
-  void _setUpListeners() => _listener
-    ..on<RoomDisconnectedEvent>((event) => _meetingClosed())
-    ..on<RoomRecordingStatusChanged>((event) {})
-    ..on<LocalTrackPublishedEvent>((_) => _sortParticipants())
-    ..on<LocalTrackUnpublishedEvent>((_) => _sortParticipants())
-    ..on<ParticipantConnectedEvent>((event) {
-      print('ParticipantConnectedEvent: ${event.participant.identity}, name => ${event.participant.identity}');
-      _sortParticipants();
-    })
-    ..on<ParticipantDisconnectedEvent>((event) {
-      print('ParticipantConnectedEvent: ${event.participant.identity}, name => ${event.participant.identity}');
-      _sortParticipants();
-    })
-    ..on<ParticipantNameUpdatedEvent>((event) {
-      print('Participant name updated: ${event.participant.identity}, name => ${event.name}');
-      _sortParticipants();
-    })
-    ..on<TrackMutedEvent>((event) {
-      print('Participant name updated: ${event.participant.identity}, name => ${event.participant.identity}');
-      _sortParticipants();
-    })
-    ..on<TrackUnmutedEvent>((event) {
-      print('Participant name updated: ${event.participant.identity}, name => ${event.participant.identity}');
-      _sortParticipants();
-    })
-    ..on<RoomMetadataChangedEvent>((event) => _parseRoomMetadata())
-    ..on<DataReceivedEvent>((event) => _parseDataReceived(event));
-
-  void _askPublish() async {
-    Logger.print('joinDisabledVideo: $joinDisabledVideo');
-    Logger.print('joinDisabledMicrophone: $joinDisabledMicrophone');
-    // video will fail when running in ios simulator
-    try {
-      final enable = !joinDisabledVideo && (widget.options?.enableVideo == true);
-      await widget.room.localParticipant?.setCameraEnabled(enable);
-    } catch (error) {
-      Logger.print('could not publish video: $error');
-    }
-    try {
-      final enable = !joinDisabledMicrophone && (widget.options?.enableMicrophone == true);
-      await widget.room.localParticipant?.setMicrophoneEnabled(enable);
-    } catch (error) {
-      Logger.print('could not publish audio: $error');
-    }
-  }
-
-  void _parseDataReceived(DataReceivedEvent event) {
-    final result = NotifyMeetingData.fromBuffer(event.data);
-    // kickofff
-    if (result.hasKickOffMeetingData() &&
-        result.kickOffMeetingData.userID.isNotEmpty &&
-        result.kickOffMeetingData.isKickOff) {
-      widget.room.disconnect();
-      widget.onOperation?.call(context, OperationType.kickOff);
-      return;
-    }
-
-    if (!result.hasStreamOperateData()) return;
-
-    final streamOperateData = result.streamOperateData;
-
-    if (streamOperateData.operation.isEmpty || result.operatorUserID == widget.room.localParticipant?.identity) {
-      return;
-    }
-
-    final operateUser = streamOperateData.operation.firstWhereOrNull((element) {
-      return element.userID == widget.room.localParticipant?.identity;
-    });
-
-    if (operateUser == null) return;
-
-    if (operateUser.hasCameraOnEntry()) {
-      final cameraOnEntry = operateUser.cameraOnEntry;
-
-      if (cameraOnEntry) {
-        MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingEnableVideo]),
-            forMobile: true, confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
-          widget.room.localParticipant?.setCameraEnabled(cameraOnEntry);
-        });
-      } else {
-        widget.room.localParticipant?.setCameraEnabled(cameraOnEntry);
-      }
-    }
-
-    if (operateUser.hasMicrophoneOnEntry()) {
-      final microphoneOnEntry = operateUser.microphoneOnEntry;
-
-      if (microphoneOnEntry) {
-        MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingUnmute]),
-            forMobile: true, confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
-          widget.room.localParticipant?.setMicrophoneEnabled(microphoneOnEntry);
-        });
-      } else {
-        widget.room.localParticipant?.setMicrophoneEnabled(microphoneOnEntry);
-      }
-    }
-  }
-
-  void _parseRoomMetadata() {
-    Logger.print('room parseRoomMetadata: ${widget.room.metadata}');
-
-    if (widget.room.metadata?.isNotEmpty == true) {
-      meetingInfo = (MeetingMetadata()..mergeFromProto3Json(jsonDecode(widget.room.metadata!))).detail;
-      meetingInfoChangedSubject.add(meetingInfo!);
-      widget.options?.enableAudioEncouragement = meetingInfo!.setting.audioEncouragement;
-      setState(() {});
-    }
   }
 
   @override
@@ -194,91 +38,7 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
         e.participant.identity == userID &&
         (e.screenShareTrack != null && !e.screenShareTrack!.muted || e.videoTrack != null && !e.videoTrack!.muted));
     wasClickedUserID = track?.participant.identity;
-    if (null != wasClickedUserID) _sortParticipants();
-  }
-
-  void _onRoomDidUpdate() {
-    _sortParticipants();
-  }
-
-  void _sortParticipants() {
-    List<ParticipantTrack> participantTracks = [];
-    Logger.print('=====sortParticipants: ${widget.room.remoteParticipants.length}');
-    for (var participant in widget.room.remoteParticipants.values) {
-      // 排除观察者
-      if (widget.roomID == participant.identity) {
-        continue;
-      }
-      VideoTrack? videoTrack;
-      VideoTrack? screenShareTrack;
-      for (var t in participant.videoTrackPublications) {
-        if (t.isScreenShare) {
-          screenShareTrack = t.track;
-        } else {
-          videoTrack = t.track;
-        }
-      }
-      participantTracks.add(setWatchedTrack(ParticipantTrack(
-        participant: participant,
-        videoTrack: videoTrack,
-        screenShareTrack: screenShareTrack,
-        isHost: hostUserID == participant.identity,
-      )));
-    }
-
-    if (null != _localParticipantTrack) {
-      participantTracks.add(_localParticipantTrack!);
-    }
-
-    participantTracks.sort((a, b) {
-      // joinedAt
-      return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
-    });
-
-    participantsSubject.add(participantTracks);
-
-    setState(() {
-      this.participantTracks = [...participantTracks];
-    });
-  }
-
-  ParticipantTrack? get _firstParticipantTrack {
-    ParticipantTrack? track;
-    if (null != watchedUserID) {
-      track = participantTracks.firstWhere((e) => e.participant.identity == watchedUserID);
-    } else if (null != wasClickedUserID) {
-      track = participantTracks.firstWhere((e) => e.participant.identity == wasClickedUserID);
-    } else {
-      track = participantTracks.firstWhereOrNull((e) => e.screenShareTrack != null || e.videoTrack != null);
-    }
-    Logger.print('first watch track : ${track == null} '
-        'videoTrack:${track?.videoTrack == null} '
-        'screenShareTrack:${track?.screenShareTrack == null} '
-        'muted:${track?.videoTrack?.muted} '
-        'muted:${track?.screenShareTrack?.muted}');
-    return track;
-  }
-
-  ParticipantTrack? get _localParticipantTrack {
-    if (widget.room.localParticipant != null) {
-      VideoTrack? videoTrack;
-      VideoTrack? screenShareTrack;
-      final localParticipantTracks = widget.room.localParticipant!.videoTrackPublications;
-      for (var t in localParticipantTracks) {
-        if (t.isScreenShare) {
-          screenShareTrack = t.track;
-        } else {
-          videoTrack = t.track;
-        }
-      }
-      return setWatchedTrack(ParticipantTrack(
-        participant: widget.room.localParticipant!,
-        videoTrack: videoTrack,
-        screenShareTrack: screenShareTrack,
-        isHost: hostUserID == widget.room.localParticipant!.identity,
-      ));
-    }
-    return null;
+    if (null != wasClickedUserID) sortParticipants();
   }
 
   _onPageChange(int pages) {
@@ -294,11 +54,11 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
 
   int get pageCount => _fixPages(
       (participantTracks.length % 4 == 0 ? participantTracks.length ~/ 4 : participantTracks.length ~/ 4 + 1) +
-          (null == _firstParticipantTrack ? 0 : 1));
+          (null == firstParticipantTrack ? 0 : 1));
 
   @override
   Widget buildChild() => Container(
-        color: Color(0xFF333333),
+        color: const Color(0xFF333333),
         child: anyOneHasVideo ? _buildGridView() : _buildDefaultView(),
       );
 
@@ -313,15 +73,20 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
     return Stack(
       children: [
         widget.room.remoteParticipants.isEmpty
-            ? (_localParticipantTrack == null
+            ? (localParticipantTrack == null
                 ? const SizedBox()
-                : ParticipantWidget.widgetFor(_localParticipantTrack!,
-                    options: widget.options,
-                    isZoom: true,
-                    useScreenShareTrack: true,
-                    audioEncouragement: meetingInfo?.setting.audioEncouragement == true, onTapSwitchCamera: () {
-                    _localParticipantTrack!.toggleCamera();
-                  }))
+                : GestureDetector(
+                    onTap: toggleFullScreen,
+                    child: ParticipantWidget.widgetFor(
+                      localParticipantTrack!,
+                      options: widget.options,
+                      isZoom: false,
+                      useScreenShareTrack: true,
+                      audioEncouragement: meetingInfo?.setting.audioEncouragement == true,
+                      onTapSwitchCamera: () {
+                        localParticipantTrack!.toggleCamera();
+                      },
+                    )))
             : StatefulBuilder(
                 builder: (v, status) {
                   return GestureDetector(
@@ -337,16 +102,14 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
                       child: PageView.builder(
                         physics: scrollPhysics,
                         itemBuilder: (context, index) {
-                          final existVideoTrack = null != _firstParticipantTrack;
+                          final existVideoTrack = null != firstParticipantTrack;
                           if (existVideoTrack && index == 0) {
                             return GestureDetector(
+                              onTap: toggleFullScreen,
                               child: FirstPage(
-                                participantTrack: _firstParticipantTrack!,
+                                participantTrack: firstParticipantTrack!,
                                 options: widget.options,
                               ),
-                              onTap: () {
-                                toggleFullScreen();
-                              },
                             );
                           }
                           return OtherPage(
@@ -391,18 +154,6 @@ class _MeetingRoomState extends MeetingViewState<MeetingRoom> {
       ],
     );
   }
-
-  void _meetingClosed() => OverlayWidget().showDialog(
-        context: context,
-        child: CustomDialog(
-          onTapLeft: OverlayWidget().dismiss,
-          onTapRight: () {
-            OverlayWidget().dismiss();
-            widget.onOperation?.call(context, OperationType.leave);
-          },
-          title: StrRes.meetingClosedHint,
-        ),
-      );
 
   @override
   void onTapLayoutView(MxNLayoutViewType type) {}

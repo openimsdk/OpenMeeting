@@ -8,6 +8,7 @@ import '../app/data/models/user_info.dart';
 import '../app/modules/meeting/meeting_room/meeting_client.dart';
 import '../app/widgets/upgrade_manager.dart';
 import 'data_sp.dart';
+
 // import 'package:tray_manager/tray_manager.dart';
 
 class AppController extends SuperController with UpgradeManger /*, TrayListener*/ {
@@ -86,20 +87,16 @@ class AppController extends SuperController with UpgradeManger /*, TrayListener*
   }
 
   @override
-  void onHidden() {
-  }
+  void onHidden() {}
 
   @override
-  void onInactive() {
-  }
+  void onInactive() {}
 
   @override
-  void onPaused() {
-  }
+  void onPaused() {}
 
   @override
-  void onResumed() {
-  }
+  void onResumed() {}
 /*
   Future<void> _setTrayIcon() async {
     await trayManager.setIcon(

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:openim_common/openim_common.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:sprintf/sprintf.dart';
 
 import '../../data/models/define.dart';
 import '../../data/models/meeting.pb.dart';
@@ -14,6 +16,7 @@ import '../../data/models/pb_extension.dart';
 import '../../data/models/meeting_option.dart';
 import '../../modules/meeting/meeting_room/meeting_client.dart';
 import 'controls.dart';
+import 'desktop/meeting_alert_dialog.dart';
 import 'participant_info.dart';
 
 abstract class MeetingView extends StatefulWidget {
@@ -61,7 +64,15 @@ abstract class MeetingViewState<T extends MeetingView> extends State<T> {
 
   bool get joinDisabledVideo => meetingInfo?.setting.disableCameraOnJoin == true;
 
-  String? get hostUserID => meetingInfo?.creatorUserID;
+  String? get hostUserID => meetingInfo?.hostUserID;
+
+  List<ParticipantTrack> participantTracks = [];
+
+  EventsListener<RoomEvent> get _listener => widget.listener;
+
+  bool get fastConnection => widget.room.engine.fastConnectOptions != null;
+
+  ParticipantTrack? focusParticipantTrack;
 
   bool get _isLandscapeScreen {
     final orientation = MediaQuery.of(context).orientation;
@@ -71,6 +82,16 @@ abstract class MeetingViewState<T extends MeetingView> extends State<T> {
   @override
   void initState() {
     widget.onSubjectInit?.call(meetingInfoChangedSubject, participantsSubject);
+    widget.room.addListener(_onRoomDidUpdate);
+    _setUpListeners();
+    sortParticipants();
+    _parseRoomMetadata();
+    WidgetsBindingCompatible.instance?.addPostFrameCallback((_) {
+      startTimerCompleter.complete(true);
+      if (!fastConnection) {
+        _askPublish();
+      }
+    });
     super.initState();
   }
 
@@ -79,12 +100,20 @@ abstract class MeetingViewState<T extends MeetingView> extends State<T> {
     meetingInfoChangedSubject.close();
     participantsSubject.close();
     _portraitScreen();
+
+    (() async {
+      widget.room.removeListener(_onRoomDidUpdate);
+      await _listener.dispose();
+      await widget.room.localParticipant?.dispose();
+      await widget.room.disconnect();
+      await widget.room.dispose();
+    })();
+
     super.dispose();
   }
 
   customWatchedUser(String userID);
 
-  /// 设置当前被看的流
   setWatchedTrack(ParticipantTrack track) {
     return track;
   }
@@ -130,7 +159,7 @@ abstract class MeetingViewState<T extends MeetingView> extends State<T> {
     ]);
 
     if (mounted) {
-      Future.delayed(Duration(milliseconds: 1000), () {
+      Future.delayed(const Duration(milliseconds: 1000), () {
         setState(() {});
       });
     }
@@ -141,7 +170,7 @@ abstract class MeetingViewState<T extends MeetingView> extends State<T> {
       DeviceOrientation.landscapeRight,
     ]);
 
-    Future.delayed(Duration(milliseconds: 1000), () {
+    Future.delayed(const Duration(milliseconds: 1000), () {
       setState(() {});
     });
   }
@@ -150,6 +179,259 @@ abstract class MeetingViewState<T extends MeetingView> extends State<T> {
     setState(() {
       _enableFullScreen = !_enableFullScreen;
     });
+  }
+
+  void _setUpListeners() => _listener
+    ..on<RoomDisconnectedEvent>((event) => _meetingClosed(event))
+    ..on<RoomRecordingStatusChanged>((event) {})
+    ..on<LocalTrackPublishedEvent>((_) => sortParticipants())
+    ..on<LocalTrackUnpublishedEvent>((_) => sortParticipants())
+    ..on<ParticipantConnectedEvent>((_) => sortParticipants())
+    ..on<ParticipantDisconnectedEvent>((_) => sortParticipants())
+    ..on<RoomMetadataChangedEvent>((event) => _parseRoomMetadata())
+    ..on<TrackMutedEvent>((event) => sortParticipants())
+    ..on<TrackUnmutedEvent>((event) => sortParticipants())
+    ..on<DataReceivedEvent>((event) => parseDataReceived(event));
+
+  void _askPublish() async {
+    Logger.print('joinDisabledVideo: $joinDisabledVideo');
+    Logger.print('joinDisabledMicrophone: $joinDisabledMicrophone');
+    // video will fail when running in ios simulator
+    try {
+      final enable = !joinDisabledVideo && (widget.options?.enableVideo == true);
+      await widget.room.localParticipant?.setCameraEnabled(enable);
+    } catch (error) {
+      Logger.print('could not publish video: $error');
+    }
+    try {
+      final enable = !joinDisabledMicrophone && (widget.options?.enableMicrophone == true);
+      await widget.room.localParticipant?.setMicrophoneEnabled(enable);
+    } catch (error) {
+      Logger.print('could not publish audio: $error');
+    }
+  }
+
+  void _parseRoomMetadata() {
+    Logger.print('room parseRoomMetadata: ${widget.room.metadata}');
+
+    if (widget.room.metadata?.isNotEmpty == true) {
+      final json = jsonDecode(widget.room.metadata!);
+      meetingInfo = MeetingInfoSetting()..mergeFromProto3Json(json['detail']);
+      meetingInfoChangedSubject.add(meetingInfo!);
+      setState(() {});
+    }
+  }
+
+  void _onRoomDidUpdate() {
+    sortParticipants();
+  }
+
+  void sortParticipants() {
+    List<ParticipantTrack> participantTracks = [];
+
+    for (var participant in widget.room.remoteParticipants.values) {
+      if (widget.roomID == participant.identity) {
+        continue;
+      }
+
+      final track = _configureTrack(participant);
+      participantTracks.add(setWatchedTrack(track));
+    }
+
+    if (null != localParticipantTrack) {
+      participantTracks.add(localParticipantTrack!);
+    }
+
+    participantTracks.sort((a, b) {
+      // joinedAt
+      return a.participant.joinedAt.millisecondsSinceEpoch - b.participant.joinedAt.millisecondsSinceEpoch;
+    });
+
+    participantsSubject.add(participantTracks);
+
+    setState(() {
+      this.participantTracks = [...participantTracks];
+    });
+  }
+
+  ParticipantTrack? get localParticipantTrack {
+    if (widget.room.localParticipant != null) {
+      final track = _configureTrack(widget.room.localParticipant!);
+
+      return setWatchedTrack(track);
+    }
+    return null;
+  }
+
+  ParticipantTrack? get firstParticipantTrack {
+    ParticipantTrack? track;
+    if (watchedUserID != null) {
+      track = participantTracks.firstWhere((e) => e.participant.identity == watchedUserID);
+    } else if (wasClickedUserID != null) {
+      track = participantTracks.firstWhere((e) => e.participant.identity == wasClickedUserID);
+    } else if (focusParticipantTrack != null) {
+      track = focusParticipantTrack;
+    } else {
+      track = participantTracks.firstWhereOrNull((e) => e.participant.hasVideo);
+    }
+    Logger.print('first watch track: ${track?.participant.identity} '
+        'videoTrack:${track?.videoTrack == null} '
+        'screenShareTrack:${track?.screenShareTrack == null} '
+        'muted:${track?.videoTrack?.muted} '
+        'muted:${track?.screenShareTrack?.muted}');
+    return track;
+  }
+
+  ParticipantTrack _configureTrack(Participant participant) {
+    VideoTrack? videoTrack;
+    VideoTrack? screenShareTrack;
+    for (final t in participant.videoTrackPublications) {
+      if (t.isScreenShare) {
+        screenShareTrack = t.track as VideoTrack?;
+      } else {
+        videoTrack = t.track as VideoTrack?;
+      }
+    }
+
+    final track = ParticipantTrack(
+      participant: participant,
+      videoTrack: videoTrack,
+      screenShareTrack: screenShareTrack,
+      isHost: hostUserID == participant.identity,
+    );
+
+    return track;
+  }
+
+  bool get anyOneHasVideo => participantTracks.any((e) =>
+      (e.screenShareTrack != null && !e.screenShareTrack!.muted) || (e.videoTrack != null && !e.videoTrack!.muted));
+
+  void parseDataReceived(DataReceivedEvent event) {
+    final result = NotifyMeetingData.fromBuffer(event.data);
+    // kickofff
+    if (result.hasKickOffMeetingData() &&
+        result.kickOffMeetingData.userID == widget.room.localParticipant?.identity &&
+        result.kickOffMeetingData.isKickOff) {
+      widget.room.disconnect();
+      widget.onOperation?.call(context, OperationType.kickOff);
+      return;
+    }
+
+    if (!result.hasStreamOperateData()) return;
+
+    final streamOperateData = result.streamOperateData;
+
+    if (streamOperateData.operation.isEmpty || result.operatorUserID == widget.room.localParticipant?.identity) {
+      return;
+    }
+
+    final operateUser = streamOperateData.operation.firstWhereOrNull((element) {
+      return element.userID == widget.room.localParticipant?.identity;
+    });
+
+    if (operateUser == null) return;
+
+    if (operateUser.hasCameraOnEntry()) {
+      final cameraOnEntry = operateUser.cameraOnEntry;
+
+      if (cameraOnEntry) {
+        MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingEnableVideo]),
+            confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
+          widget.room.localParticipant?.setCameraEnabled(cameraOnEntry);
+        });
+      } else {
+        widget.room.localParticipant?.setCameraEnabled(cameraOnEntry);
+      }
+    }
+
+    if (operateUser.hasMicrophoneOnEntry()) {
+      final microphoneOnEntry = operateUser.microphoneOnEntry;
+
+      if (microphoneOnEntry) {
+        MeetingAlertDialog.show(context, sprintf(StrRes.requestXDoHint, [StrRes.meetingUnmute]),
+            confirmText: StrRes.confirm, cancelText: StrRes.keepClose, onConfirm: () {
+          widget.room.localParticipant?.setMicrophoneEnabled(microphoneOnEntry);
+        });
+      } else {
+        widget.room.localParticipant?.setMicrophoneEnabled(microphoneOnEntry);
+      }
+    }
+  }
+
+  void _meetingClosed(RoomDisconnectedEvent event) {
+    Logger.print('_meetingClosed: ${event.reason}');
+
+    if (PlatformExt.isDesktop && !Navigator.of(context).canPop()) {
+      return;
+    }
+
+    final isHost = widget.room.localParticipant?.identity == meetingInfo?.hostUserID;
+
+    if (event.reason == DisconnectReason.reconnectAttemptsExceeded) {
+      MeetingAlertDialog.showDisconnect(context, 'Reconnect Attempts Exceeded', confirmText: StrRes.iKnew,
+          onConfirm: () {
+        widget.onOperation?.call(context, OperationType.onlyClose);
+      });
+
+      return;
+    }
+
+    if (event.reason == DisconnectReason.roomDeleted) {
+      if (isHost) {
+        return;
+      }
+      MeetingAlertDialog.showDisconnect(context, StrRes.meetingIsOver, confirmText: StrRes.iKnew, onConfirm: () {
+        widget.onOperation?.call(context, OperationType.onlyClose);
+      });
+      return;
+    }
+
+    if (event.reason == DisconnectReason.participantRemoved) {
+      MeetingAlertDialog.showDisconnect(context, StrRes.participantRemovedHit, confirmText: StrRes.iKnew,
+          onConfirm: () {
+        widget.onOperation?.call(context, OperationType.onlyClose);
+      });
+
+      return;
+    }
+
+    if (event.reason != DisconnectReason.disconnected || isHost) {
+      return;
+    }
+
+    MeetingAlertDialog.show(
+        context, event.reason == DisconnectReason.disconnected ? StrRes.meetingIsOver : StrRes.meetingClosedHint,
+        confirmText: event.reason == DisconnectReason.disconnected ? StrRes.iKnew : null, onConfirm: () {
+      widget.onOperation?.call(context, OperationType.leave);
+    });
+  }
+
+  void _onTrackMuted(TrackMutedEvent event) {
+    if (focusParticipantTrack != null && event.participant.identity == focusParticipantTrack!.participant.identity) {
+      setState(() {
+        focusParticipantTrack = null;
+      });
+    }
+
+    final track = _configureTrack(event.participant);
+    final index = participantTracks.indexWhere((element) => element.participant.identity == track.participant.identity);
+    participantTracks[index] = track;
+
+    participantsSubject.add(participantTracks);
+  }
+
+  void _onTrackUnMuted(TrackUnmutedEvent event) {
+    if (wasClickedUserID != null || watchedUserID != null || focusParticipantTrack != null) return;
+    final track = _configureTrack(event.participant);
+
+    setState(() {
+      focusParticipantTrack = track;
+    });
+
+    final index = participantTracks.indexWhere((element) => element.participant.identity == track.participant.identity);
+    participantTracks[index] = track;
+
+    participantsSubject.add(participantTracks);
   }
 
   @override

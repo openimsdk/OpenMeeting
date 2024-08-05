@@ -381,7 +381,7 @@ class _ParticipantsDesktopViewState extends ParticipantsViewState<ParticipantsDe
   void _onTapMore(BuildContext ctx, String userID, String nickname) {
     final itemIsHost = userID == _meetingInfo?.hostUserID;
 
-    MeetingAlertDialog.showMemberSetting(ctx, forMobile: false, valueNotifier: valueNotifier, onEnableCamera: () {
+    MeetingAlertDialog.showMemberSetting(ctx, valueNotifier: valueNotifier, onEnableCamera: () {
       _disableParticipantCamera(userID, !valueNotifier.value.cameraIsEnable);
     }, onEnableMic: () {
       _disableParticipantMicrophone(userID, !valueNotifier.value.micIsEnable);

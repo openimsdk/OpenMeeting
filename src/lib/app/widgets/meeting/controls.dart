@@ -465,8 +465,7 @@ class _ControlsViewState extends State<ControlsView> {
                         if (!mounted || value == null) {
                           return;
                         }
-                        MeetingAlertDialog.show(forMobile: true, context, StrRes.appointNewHostHint,
-                            onConfirm: () async {
+                        MeetingAlertDialog.show(context, StrRes.appointNewHostHint, onConfirm: () async {
                           await widget.onParticipantOperation
                               ?.call(type: OperationParticipantType.setHost, userID: value);
                           if (mounted) {
